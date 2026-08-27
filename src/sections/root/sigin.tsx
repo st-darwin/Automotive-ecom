@@ -31,8 +31,8 @@ export default function SignIn() {
           </div>
           
           <div className="space-y-1">
-            <span className="inline-block px-3 py-1 text-xs font-semibold tracking-wider text-blue-700 uppercase bg-blue-100/60 rounded-full mb-1">
-              Customer Portal
+            <span className="inline-block px-3 my-1 py-1 text-xs font-semibold tracking-wider text-blue-700 uppercase bg-blue-100/60 rounded-full mb-1">
+              Active Portal
             </span>
             <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-slate-900">
               Kinchris Switch
