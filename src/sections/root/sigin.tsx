@@ -1,7 +1,25 @@
-import React from 'react';
+import { account } from '../../appwrite/Client';
 import { loginWithGoogle } from '../../appwrite/Auth';
 
-export default function SignIn() {
+export const SignInLoader = async() =>{
+
+
+  try{
+    const user = await account.get();
+    if(user.$id) return {user}
+
+  }
+  catch(e) {
+    console.log("error fetching user session" , e )
+  }
+
+
+
+}
+
+ const SignIn = () => {
+
+ 
   return (
     <div className="relative min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 via-blue-50/40 to-slate-100 px-4 py-12 sm:px-6 lg:px-8 overflow-hidden">
       
@@ -85,3 +103,4 @@ export default function SignIn() {
     </div>
   );
 }
+export default SignIn

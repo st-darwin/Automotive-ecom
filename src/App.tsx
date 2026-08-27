@@ -1,25 +1,32 @@
+import { createBrowserRouter, RouterProvider, createRoutesFromElements, Route } from "react-router-dom";
 
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import SignIn from './sections/root/sigin';
-import AdminLayout from './sections/Admin/AdminLayout';
+import AdminLayout , {AdminLoader} from './sections/Admin/AdminLayout';
+import SignIn , {SignInLoader} from "./sections/root/sigin";
 
+
+
+const router = createBrowserRouter(
+  createRoutesFromElements(
+
+    <> 
+    {/*  ADMIN LAYOUT*/}
+    <Route path="/" element={<AdminLayout />} loader={AdminLoader} >
+        
+     
+
+    </Route>
+
+     <Route path="/sign-in" element={<SignIn />} loader={SignInLoader} />
+    </>
+
+
+    
+
+  )
+)
 
 const App = () => {
-  return (
-    <Router>
-      <Routes>
-        {/* Admin Layout wrapping child pages */}
-        <Route path="/" element={<AdminLayout />}>
-      
-        </Route>
+ return <RouterProvider router={router} />
+}
 
-        
-
-        {/* Sign In Route */}
-        <Route path="/sign-in" element={<SignIn />} />
-      </Routes>
-    </Router>
-  );
-};
-
-export default App;
+export default App

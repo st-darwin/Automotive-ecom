@@ -1,5 +1,5 @@
 import { account, database, appwriteConfig } from "./Client";
-import { OAuthProvider, Query } from "appwrite";
+import { OAuthProvider, Query , ID } from "appwrite";
 
 export const loginWithGoogle = async () => {
   try {
@@ -40,69 +40,119 @@ export async function getCurrentUser() {
  * Stores or updates the authenticated user's info in the Appwrite database collection.
  */
 export async function storeUserData() {
-    try {
-        const sessionUser = await getCurrentUser();
-        if (!sessionUser) return null;
+  try {
+    console.log("STORE USER: started");
 
-        const userData = {
-            accountId: sessionUser.$id,
-            name: sessionUser.name,
-            email: sessionUser.email,
-            role: "customer",
-            phone: sessionUser.phone || "",
-        };
+    const sessionUser = await getCurrentUser();
 
-        const existingDocs = await database.listDocuments(
-            appwriteConfig.databaseId,
-            appwriteConfig.userCollectionId,
-            [Query.equal("accountId", sessionUser.$id)]
-        );
+    console.log("STORE USER: auth user =", sessionUser);
 
-        if (existingDocs.documents.length > 0) {
-            const docId = existingDocs.documents[0].$id;
-            return await database.updateDocument(
-                appwriteConfig.databaseId,
-                appwriteConfig.userCollectionId,
-                docId,
-                userData
-            );
-        } else {
-            return await database.createDocument(
-                appwriteConfig.databaseId,
-                appwriteConfig.userCollectionId,
-                sessionUser.$id,
-                userData
-            );
-        }
-    } catch (error) {
-        console.error("Failed to store user data in database:", error);
-        return null;
+    if (!sessionUser) {
+      console.error("STORE USER: no authenticated user");
+      return null;
     }
+
+    const userData = {
+      accountId: sessionUser.$id,
+      name: sessionUser.name || "",
+      email: sessionUser.email || "",
+      role: "customer",
+      phoneNumber: sessionUser.phone || "",
+    };
+
+    console.log("STORE USER: data =", userData);
+
+    const existingDocs = await database.listDocuments(
+      appwriteConfig.databaseId,
+      appwriteConfig.userCollectionId,
+      [Query.equal("accountId", sessionUser.$id)]
+    );
+
+    console.log("STORE USER: existing docs =", existingDocs.documents);
+
+    if (existingDocs.documents.length > 0) {
+      const docId = existingDocs.documents[0].$id;
+
+      console.log("STORE USER: updating document =", docId);
+
+      const updated = await database.updateDocument(
+        appwriteConfig.databaseId,
+        appwriteConfig.userCollectionId,
+        docId,
+        userData
+      );
+
+      console.log("STORE USER: update successful =", updated);
+
+      return updated;
+    }
+
+    console.log("STORE USER: creating new document");
+
+    const created = await database.createDocument(
+      appwriteConfig.databaseId,
+      appwriteConfig.userCollectionId,
+      ID.unique(),
+      userData
+    );
+
+    console.log("STORE USER: CREATE SUCCESS =", created);
+
+    return created;
+  } catch (error) {
+    console.error("STORE USER: APPWRITE ERROR =", error);
+    return null;
+  }
 }
 
 /**
  * Fetches the user's custom document. If it doesn't exist yet, 
  * it automatically triggers storeUserData() to create it.
  */
-export async function getUser() {
-    try {
-        const sessionUser = await getCurrentUser();
-        if (!sessionUser) return null;
 
-        try {
-            const response = await database.getDocument(
-                appwriteConfig.databaseId,
-                appwriteConfig.userCollectionId,
-                sessionUser.$id
-            );
-            return response;
-        } catch (fetchError) {
-            // Document doesn't exist yet, fall back to creating it
-            console.log("User document not found in database, creating one now..." , fetchError);
-            return await storeUserData();
-        }
-    } catch (error) {
-        console.error("Failed to fetch or create user document:", error);
-        return null;
+export async function getUser() {
+  try {
+    const sessionUser = await getCurrentUser();
+
+    if (!sessionUser) return null;
+
+    const response = await database.listDocuments(
+      appwriteConfig.databaseId,
+      appwriteConfig.userCollectionId,
+      [Query.equal("accountId", sessionUser.$id)]
+    );
+
+    if (response.documents.length > 0) {
+      return response.documents[0];
     }
+
+    // User has authenticated but doesn't have a database document yet.
+    return await storeUserData();
+
+  } catch (error) {
+    console.error("Failed to fetch or create user document:", error);
+    return null;
+  }
 }
+
+
+
+
+export const getExistingUser = async () => {
+  try {
+    const currentAccount = await account.get();
+    if (!currentAccount) return null;
+
+    const { documents } = await database.listDocuments(
+      appwriteConfig.databaseId,
+      appwriteConfig.userCollectionId,
+      [Query.equal("accountId", currentAccount.$id)]
+    );
+
+    if (documents.length === 0) return null;
+    return documents[0];
+  } catch (error) {
+    console.error("Google getExistingUser failed:", error);
+    return null;
+  }
+};
