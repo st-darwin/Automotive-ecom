@@ -6,29 +6,29 @@ export const adminSidebarItems = [
   },
   {
     label: "Inventory",
-    route: "/admin/inventory",
+    route: "inventory",
     icon: "package",
   },
   {
     label: "Orders",
-    route: "/admin/orders",
+    route: "/orders",
     icon: "shopping-cart",
   },
   {
     label: "Customers",
-    route: "/admin/customers",
+    route: "customers",
     icon: "users",
   },
 
 
   {
     label: "Analytics",
-    route: "/admin/analytics",
+    route: "analytics",
     icon: "chart",
   },
   {
     label: "Settings",
-    route: "/admin/settings",
+    route: "settings",
     icon: "settings",
   },
 ];

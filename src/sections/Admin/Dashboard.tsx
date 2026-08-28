@@ -15,16 +15,16 @@ export const Dashboardoader = async () => {
 }
 
 const Dashboard = () => {
-    const user: any = useLoaderData()
-    const userName = user?.name ? user.name.split(' ')[0] : 'Admin'
+    const user = useLoaderData() as {name : string}
+    const userName = user?.name ? user.name.split(' ')[0]  : 'Admin'
 
     return (
         <div>
             <Header
-                title={`Welcome back, ${userName}`}
+                title={`Welcome back, ${userName} 👋`}
                 description="Your automotive command center is primed. Monitor real-time store inventory, track performance metrics, and keep Kinchris Switch running at peak velocity."
                 ctaText="View Products"
-                ctaUrl="/admin/inventory"
+                ctaUrl="/inventory"
             />
         </div>
     )

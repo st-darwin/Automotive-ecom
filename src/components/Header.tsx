@@ -19,7 +19,7 @@ const Header = ({ title, description, ctaText, ctaUrl }: Props) => {
             
             <article className="relative space-y-3">
                {/* Minimal badge style */}
-                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50/80 border border-blue-100/60 text-[11px] font-semibold uppercase tracking-wider text-blue-600 shadow-sm shadow-blue-500/5">
+                <div className="inline-flex mt-2 items-center gap-2 px-3 py-1 rounded-full bg-blue-50/80 border border-blue-100/60 text-[11px] font-semibold uppercase tracking-wider text-blue-600 shadow-sm shadow-blue-500/5">
                     <Car size={13} strokeWidth={2.5} />
                     <span>kinchris switch / {isRoot ? "Dashboard" : "Management"}</span>
                 </div>

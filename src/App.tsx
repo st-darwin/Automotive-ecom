@@ -3,7 +3,7 @@ import { createBrowserRouter, RouterProvider, createRoutesFromElements, Route } 
 import AdminLayout , {AdminLoader} from './sections/Admin/AdminLayout';
 import SignIn , {SignInLoader} from "./sections/root/sigin";
 import Dashboard , {Dashboardoader} from "./sections/Admin/Dashboard";
-
+import Inventory from "./sections/Admin/Inventory";
 
 
 const router = createBrowserRouter(
@@ -13,6 +13,7 @@ const router = createBrowserRouter(
     {/*  ADMIN LAYOUT*/}
     <Route path="/" element={<AdminLayout />} loader={AdminLoader} >
     <Route index element={<Dashboard/>} loader={Dashboardoader} />
+    <Route path="inventory" element={<Inventory/>} />
         
      
 
