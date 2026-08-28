@@ -2,6 +2,7 @@ import { createBrowserRouter, RouterProvider, createRoutesFromElements, Route } 
 
 import AdminLayout , {AdminLoader} from './sections/Admin/AdminLayout';
 import SignIn , {SignInLoader} from "./sections/root/sigin";
+import Dashboard , {Dashboardoader} from "./sections/Admin/Dashboard";
 
 
 
@@ -11,6 +12,7 @@ const router = createBrowserRouter(
     <> 
     {/*  ADMIN LAYOUT*/}
     <Route path="/" element={<AdminLayout />} loader={AdminLoader} >
+    <Route index element={<Dashboard/>} loader={Dashboardoader} />
         
      
 
