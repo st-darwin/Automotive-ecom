@@ -4,7 +4,6 @@ import AdminSidebar from "../../components/AdminNavBar";
 export const AdminLoader = async () => {
   const user = await getUser();
 
-  console.log("DATABASE USER:", user);
 
   if (!user) {
     console.error("Could not get/create database user");

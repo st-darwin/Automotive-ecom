@@ -10,6 +10,10 @@ import GreasePage from "./sections/Admin/GreasePage";
 import CreateGrease from "./sections/Admin/CreateGrease";
 import MotorPartsPage from "./sections/Admin/MotorPartsPage";
 import CreateMotorParts from "./sections/Admin/CreateMotorParts";
+import OrdersPage from "./sections/Admin/Order";
+import TyreOrder from "./sections/Admin/TyreOrder";
+import GreaseOrder from "./sections/Admin/GreaseOrder";
+import MotorPartsOrder from "./sections/Admin/MotorPartsOrder";
 
 
 const router = createBrowserRouter(
@@ -27,7 +31,10 @@ const router = createBrowserRouter(
     <Route path="inventory/grease/create" element={<CreateGrease/>} />
     <Route  path="inventory/motor-parts" element={<MotorPartsPage/>}/> 
     <Route  path="inventory/motor-parts/create" element={<CreateMotorParts/>}/>
-
+    <Route path="orders" element={<OrdersPage/>}/>
+    <Route path="orders/tyres" element={<TyreOrder/>}/>
+    <Route  path="orders/grease" element={<GreaseOrder/>} />
+    <Route  path="orders/motor-parts" element={<MotorPartsOrder/>}/>
 
       
 
