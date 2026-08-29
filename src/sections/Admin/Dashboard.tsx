@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useLoaderData, useNavigate } from 'react-router-dom';
 import Header from '../../components/Header';
 import { getUser } from '../../appwrite/Auth';
-import { ShoppingBag, Users, DollarSign, Clock, ArrowUpRight } from 'lucide-react';
+import { ShoppingBag, Users, DollarSign, Clock, ArrowUpRight, Calendar } from 'lucide-react';
 import { appwriteConfig, database } from '../../appwrite/Client';
 
 export const Dashboardoader = async () => {
@@ -22,7 +22,9 @@ const Dashboard = () => {
 
     const [stats, setStats] = useState({
         totalRevenue: 0,
+        monthRevenue: 0,
         totalOrders: 0,
+        monthOrders: 0,
         totalCustomers: 0,
         pendingCount: 0
     });
@@ -39,12 +41,38 @@ const Dashboard = () => {
                 ]);
 
                 const allOrders = [...tyres.documents, ...grease.documents, ...parts.documents];
-                const revenue = allOrders.reduce((acc, curr) => acc + (curr.totalPrice || 0), 0);
-                const pending = allOrders.filter(o => o.paymentStatus?.toLowerCase() === 'pending').length;
+                
+                const now = new Date();
+                const currentMonth = now.getMonth();
+                const currentYear = now.getFullYear();
+
+                let revenue = 0;
+                let monthRev = 0;
+                let mOrdersCount = 0;
+                let pending = 0;
+
+                allOrders.forEach((order) => {
+                    const price = order.totalPrice || 0;
+                    revenue += price;
+
+                    if (order.paymentStatus?.toLowerCase() === 'pending') {
+                        pending += 1;
+                    }
+
+                    if (order.$createdAt) {
+                        const orderDate = new Date(order.$createdAt);
+                        if (orderDate.getMonth() === currentMonth && orderDate.getFullYear() === currentYear) {
+                            monthRev += price;
+                            mOrdersCount += 1;
+                        }
+                    }
+                });
 
                 setStats({
                     totalRevenue: revenue,
+                    monthRevenue: monthRev,
                     totalOrders: allOrders.length,
+                    monthOrders: mOrdersCount,
                     totalCustomers: users.total || users.documents.length,
                     pendingCount: pending
                 });
@@ -68,7 +96,7 @@ const Dashboard = () => {
             />
 
             {/* Metrics Grid */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                 <div className="bg-white/80 backdrop-blur-xl border border-slate-200/60 rounded-3xl p-6 shadow-2xs">
                     <div className="flex items-center justify-between mb-4">
                         <div className="w-12 h-12 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center">
@@ -82,6 +110,17 @@ const Dashboard = () => {
 
                 <div className="bg-white/80 backdrop-blur-xl border border-slate-200/60 rounded-3xl p-6 shadow-2xs">
                     <div className="flex items-center justify-between mb-4">
+                        <div className="w-12 h-12 rounded-2xl bg-teal-50 text-teal-600 flex items-center justify-center">
+                            <DollarSign className="w-6 h-6" />
+                        </div>
+                        <span className="text-xs font-semibold text-teal-600 bg-teal-50 px-2.5 py-1 rounded-full">This Month</span>
+                    </div>
+                    <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider block mb-1">Revenue This Month</span>
+                    <h3 className="text-2xl font-bold text-slate-900">{loading ? '...' : `₦${stats.monthRevenue.toLocaleString()}`}</h3>
+                </div>
+
+                <div className="bg-white/80 backdrop-blur-xl border border-slate-200/60 rounded-3xl p-6 shadow-2xs">
+                    <div className="flex items-center justify-between mb-4">
                         <div className="w-12 h-12 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center">
                             <ShoppingBag className="w-6 h-6" />
                         </div>
@@ -89,6 +128,17 @@ const Dashboard = () => {
                     </div>
                     <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider block mb-1">Total Orders</span>
                     <h3 className="text-2xl font-bold text-slate-900">{loading ? '...' : stats.totalOrders}</h3>
+                </div>
+
+                <div className="bg-white/80 backdrop-blur-xl border border-slate-200/60 rounded-3xl p-6 shadow-2xs">
+                    <div className="flex items-center justify-between mb-4">
+                        <div className="w-12 h-12 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center">
+                            <Calendar className="w-6 h-6" />
+                        </div>
+                        <span className="text-xs font-semibold text-indigo-600 bg-indigo-50 px-2.5 py-1 rounded-full">Monthly</span>
+                    </div>
+                    <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider block mb-1">Orders This Month</span>
+                    <h3 className="text-2xl font-bold text-slate-900">{loading ? '...' : stats.monthOrders}</h3>
                 </div>
 
                 <div className="bg-white/80 backdrop-blur-xl border border-slate-200/60 rounded-3xl p-6 shadow-2xs">
