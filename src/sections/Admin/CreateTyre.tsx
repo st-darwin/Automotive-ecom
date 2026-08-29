@@ -3,7 +3,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import Header from '../../components/Header';
 import { ArrowLeft, Upload, X, Loader2 } from 'lucide-react';
 
-import { appwriteConfig , database , storage } from '../../appwrite/Client';
+import { appwriteConfig, database, storage } from '../../appwrite/Client';
 import { ID } from 'appwrite';
 
 const CreateTyre = () => {
@@ -20,6 +20,7 @@ const CreateTyre = () => {
         stock: '',
         imageUrl: '',
         treadPattern: '',
+        year: new Date().getFullYear().toString(),
     });
 
     const [imageFile, setImageFile] = useState<File | null>(null);
@@ -38,6 +39,7 @@ const CreateTyre = () => {
                 stock: tyreToEdit.stock ? String(tyreToEdit.stock) : '',
                 imageUrl: tyreToEdit.imageUrl || '',
                 treadPattern: tyreToEdit.treadPattern || '',
+                year: tyreToEdit.year ? String(tyreToEdit.year) : new Date().getFullYear().toString(),
             });
             if (tyreToEdit.imageUrl) {
                 setImagePreview(tyreToEdit.imageUrl);
@@ -79,13 +81,11 @@ const CreateTyre = () => {
         try {
             let uploadedImageUrl = formData.imageUrl;
 
-            // Handle image upload if a new file was dropped/selected
-      if (imageFile) {
-     const uploadedFile = await storage.createFile(appwriteConfig.storageId, ID.unique(), imageFile);
-     
-     // Manual string construction using your Appwrite config endpoint and project
-     uploadedImageUrl = `${appwriteConfig.endpointUrl}/storage/buckets/${appwriteConfig.storageId}/files/${uploadedFile.$id}/view?project=${appwriteConfig.project}`;
-}
+            if (imageFile) {
+                const uploadedFile = await storage.createFile(appwriteConfig.storageId, ID.unique(), imageFile);
+                uploadedImageUrl = `${appwriteConfig.endpointUrl}/storage/buckets/${appwriteConfig.storageId}/files/${uploadedFile.$id}/view?project=${appwriteConfig.project}`;
+            }
+
             const payload = {
                 name: formData.name,
                 brand: formData.brand,
@@ -95,20 +95,23 @@ const CreateTyre = () => {
                 stock: parseInt(formData.stock, 10) || 0,
                 imageUrl: uploadedImageUrl,
                 treadPattern: formData.treadPattern,
+                year: formData.year.toString(),
             };
 
             if (tyreToEdit) {
-                // Update document
                 await database.updateDocument(
                     appwriteConfig.databaseId, 
                     appwriteConfig.tyreColection,
-                     tyreToEdit.$id, payload);
+                    tyreToEdit.$id, 
+                    payload
+                );
             } else {
-                // Create document
-                 await database.createDocument(
+                await database.createDocument(
                     appwriteConfig.databaseId,
-                     appwriteConfig.tyreColection,
-                     ID.unique(), payload);
+                    appwriteConfig.tyreColection,
+                    ID.unique(), 
+                    payload
+                );
             }
 
             navigate('/inventory/tyres');
@@ -168,6 +171,18 @@ const CreateTyre = () => {
                             placeholder="e.g. 205/55R16"
                             value={formData.size}
                             onChange={(e) => setFormData({ ...formData, size: e.target.value })}
+                            className="w-full px-4 py-3 rounded-2xl bg-slate-50/50 border border-slate-200 text-xs text-slate-800 font-medium focus:outline-none focus:border-blue-500 focus:bg-white transition-all"
+                        />
+                    </div>
+
+                    <div className="space-y-2">
+                        <label className="text-xs font-semibold text-slate-700 tracking-wide uppercase">Manufacturing Year</label>
+                        <input
+                            type="number"
+                            required
+                            placeholder="2026"
+                            value={formData.year}
+                            onChange={(e) => setFormData({ ...formData, year: e.target.value })}
                             className="w-full px-4 py-3 rounded-2xl bg-slate-50/50 border border-slate-200 text-xs text-slate-800 font-medium focus:outline-none focus:border-blue-500 focus:bg-white transition-all"
                         />
                     </div>
@@ -266,7 +281,7 @@ const CreateTyre = () => {
                 <div className="pt-4 flex items-center justify-end gap-3 border-t border-slate-100">
                     <button
                         type="button"
-                        onClick={() => navigate('/admin/inventory/tyres')}
+                        onClick={() => navigate('/inventory/tyres')}
                         className="px-5 py-3 rounded-2xl border border-slate-200 text-slate-600 hover:bg-slate-50 text-xs font-semibold transition-all cursor-pointer"
                     >
                         Cancel

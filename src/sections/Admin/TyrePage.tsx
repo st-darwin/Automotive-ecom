@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Header from '../../components/Header';
-import { Plus, MoreVertical, Edit3, Trash2, Disc } from 'lucide-react';
+import { Plus, MoreVertical, Edit3, Trash2, Disc, Search } from 'lucide-react';
 import { appwriteConfig, database } from '../../appwrite/Client';
 
 interface Tyre {
@@ -15,6 +15,7 @@ interface Tyre {
     imageUrl: string;
     storeId: string;
     treadPattern: string;
+    year: number;
 }
 
 const TyrePage = () => {
@@ -22,6 +23,7 @@ const TyrePage = () => {
     const [tyres, setTyres] = useState<Tyre[]>([]);
     const [loading, setLoading] = useState(true);
     const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
+    const [searchQuery, setSearchQuery] = useState('');
 
     const fetchTyres = async () => {
         try {
@@ -64,6 +66,18 @@ const TyrePage = () => {
         navigate('/inventory/tyres/create', { state: { tyreToEdit: tyre } });
     };
 
+    // Filter tyres based on search query (matches name, brand, size, category, or year)
+    const filteredTyres = tyres.filter((tyre) => {
+        const query = searchQuery.toLowerCase();
+        return (
+            tyre.name?.toLowerCase().includes(query) ||
+            tyre.brand?.toLowerCase().includes(query) ||
+            tyre.size?.toLowerCase().includes(query) ||
+            tyre.category?.toLowerCase().includes(query) ||
+            String(tyre.year)?.toLowerCase().includes(query)
+        );
+    });
+
     // Reusable image or fallback element renderer
     const renderTyreMedia = (tyre: Tyre, isMobile: boolean = false) => {
         const dimensions = isMobile ? "w-12 h-12 rounded-2xl" : "w-10 h-10 rounded-xl";
@@ -103,34 +117,52 @@ const TyrePage = () => {
                 </button>
             </div>
 
+            {/* Search Bar Filter Row */}
+            <div className="relative max-w-md w-full">
+                <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                <input
+                    type="text"
+                    placeholder="Search by name, brand, size, category, or year..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="w-full pl-11 pr-4 py-3 bg-white/80 backdrop-blur-xl border border-slate-200/80 rounded-2xl text-xs text-slate-800 font-medium placeholder-slate-400 focus:outline-none focus:border-blue-500 focus:bg-white transition-all shadow-2xs"
+                />
+            </div>
+
             {loading ? (
                 <div className="flex items-center justify-center py-24">
                     <div className="w-6 h-6 border-2 border-slate-300 border-t-slate-800 rounded-full animate-spin" />
                 </div>
-            ) : tyres.length === 0 ? (
+            ) : filteredTyres.length === 0 ? (
                 <div className="bg-white/60 backdrop-blur-xl border border-slate-200/60 rounded-3xl p-8 sm:p-16 text-center space-y-4 shadow-2xs">
                     <div className="w-14 h-14 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center mx-auto">
                         <Disc className="w-7 h-7" />
                     </div>
                     <div className="space-y-1 max-w-sm mx-auto">
-                        <h3 className="text-base font-semibold text-slate-900">No tyres in inventory</h3>
+                        <h3 className="text-base font-semibold text-slate-900">
+                            {tyres.length === 0 ? "No tyres in inventory" : "No matching tyres found"}
+                        </h3>
                         <p className="text-slate-500 text-xs leading-relaxed">
-                            Get started by creating your first tyre product with pricing, specs, and tread patterns.
+                            {tyres.length === 0 
+                                ? "Get started by creating your first tyre product with pricing, specs, and tread patterns."
+                                : `No results found for "${searchQuery}". Try searching with a different keyword.`}
                         </p>
                     </div>
-                    <button
-                        onClick={() => navigate('/inventory/tyres/create')}
-                        className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-medium transition-all shadow-sm cursor-pointer"
-                    >
-                        <Plus className="w-3.5 h-3.5" />
-                        <span>Create First Tyre</span>
-                    </button>
+                    {tyres.length === 0 && (
+                        <button
+                            onClick={() => navigate('/inventory/tyres/create')}
+                            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-medium transition-all shadow-sm cursor-pointer"
+                        >
+                            <Plus className="w-3.5 h-3.5" />
+                            <span>Create First Tyre</span>
+                        </button>
+                    )}
                 </div>
             ) : (
                 <>
-                    {/* Mobile & Tablet Card View (Visible on screens smaller than lg) */}
+                    {/* Mobile & Tablet Card View */}
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:hidden gap-4">
-                        {tyres.map((tyre) => (
+                        {filteredTyres.map((tyre) => (
                             <div 
                                 key={tyre.$id}
                                 onClick={(e) => handleEdit(tyre, e)}
@@ -180,7 +212,11 @@ const TyrePage = () => {
                                     </div>
                                 </div>
 
-                                <div className="grid grid-cols-3 gap-2 pt-3 border-t border-slate-100 text-[11px]">
+                                <div className="grid grid-cols-4 gap-2 pt-3 border-t border-slate-100 text-[11px]">
+                                    <div>
+                                        <span className="text-slate-400 block mb-0.5">Year</span>
+                                        <span className="font-semibold text-slate-900 block">{tyre.year || 'N/A'}</span>
+                                    </div>
                                     <div>
                                         <span className="text-slate-400 block mb-0.5">Category</span>
                                         <span className="font-semibold text-blue-600 uppercase truncate block">{tyre.category}</span>
@@ -200,7 +236,7 @@ const TyrePage = () => {
                         ))}
                     </div>
 
-                    {/* Desktop Table View (Visible on Large Laptops/Desktops lg+) */}
+                    {/* Desktop Table View */}
                     <div className="hidden lg:block bg-white/80 backdrop-blur-xl border border-slate-200/60 rounded-3xl shadow-2xs overflow-hidden">
                         <div className="overflow-x-auto">
                             <table className="w-full text-left border-collapse">
@@ -208,6 +244,7 @@ const TyrePage = () => {
                                     <tr className="border-b border-slate-100 bg-slate-50/50 text-[11px] font-semibold text-slate-400 uppercase tracking-wider">
                                         <th className="py-4 px-6">Product</th>
                                         <th className="py-4 px-6">Brand / Size</th>
+                                        <th className="py-4 px-6">Year</th>
                                         <th className="py-4 px-6">Category</th>
                                         <th className="py-4 px-6">Tread Pattern</th>
                                         <th className="py-4 px-6">Price</th>
@@ -216,7 +253,7 @@ const TyrePage = () => {
                                     </tr>
                                 </thead>
                                 <tbody className="divide-y divide-slate-100 text-xs font-medium text-slate-600">
-                                    {tyres.map((tyre) => (
+                                    {filteredTyres.map((tyre) => (
                                         <tr 
                                             key={tyre.$id} 
                                             onClick={(e) => handleEdit(tyre, e)}
@@ -238,6 +275,9 @@ const TyrePage = () => {
                                                     <p className="text-slate-900 font-semibold">{tyre.brand}</p>
                                                     <span className="text-[11px] text-slate-400">{tyre.size}</span>
                                                 </div>
+                                            </td>
+                                            <td className="py-4 px-6 font-semibold text-slate-900">
+                                                {tyre.year || 'N/A'}
                                             </td>
                                             <td className="py-4 px-6">
                                                 <span className="inline-flex px-2.5 py-1 rounded-full text-[10px] font-semibold bg-blue-50 text-blue-600 border border-blue-100/60 uppercase">
