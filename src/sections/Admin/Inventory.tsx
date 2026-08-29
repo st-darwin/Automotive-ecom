@@ -31,7 +31,7 @@ const stores = [
         name: 'Motor Parts',
         category: 'Hardware & Spares',
         description: 'Precision switches, electrical relays, mechanical assemblies, and core engine parts.',
-        route: 'MotorParts',
+        route: 'motor-parts',
         icon: Wrench,
         accent: 'from-emerald-500 to-teal-600',
         bgLight: 'bg-emerald-50/50',

@@ -11,7 +11,8 @@ export const appwriteConfig = {
        databaseId: import.meta.env.VITE_APPWRITE_DATABASE_ID,
        tyreColection:import.meta.env.VITE_APPWRITE_TYRE_COLLECTION_ID,
        storageId: import.meta.env.VITE_APPWRITE_STORAGE_ID,
-       greaseCollection: import.meta.env.VITE_APPWRITE_GREASE_COLLECTION_ID
+       greaseCollection: import.meta.env.VITE_APPWRITE_GREASE_COLLECTION_ID,
+       motorPartsCollection : import.meta.env.VITE_APPWRITE_MOTORPARTS_COLLECTION_ID,
 }
 
 const client = new Client()
