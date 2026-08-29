@@ -14,6 +14,7 @@ import OrdersPage from "./sections/Admin/Order";
 import TyreOrder from "./sections/Admin/TyreOrder";
 import GreaseOrder from "./sections/Admin/GreaseOrder";
 import MotorPartsOrder from "./sections/Admin/MotorPartsOrder";
+import CustomerPage from "./sections/Admin/CustomerPage";
 
 
 const router = createBrowserRouter(
@@ -35,6 +36,8 @@ const router = createBrowserRouter(
     <Route path="orders/tyres" element={<TyreOrder/>}/>
     <Route  path="orders/grease" element={<GreaseOrder/>} />
     <Route  path="orders/motor-parts" element={<MotorPartsOrder/>}/>
+    <Route path="customers" element={<CustomerPage/>} />
+
 
       
 
