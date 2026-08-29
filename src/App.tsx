@@ -6,6 +6,8 @@ import Dashboard , {Dashboardoader} from "./sections/Admin/Dashboard";
 import Inventory from "./sections/Admin/Inventory";
 import TyrePage from "./sections/Admin/TyrePage";
 import CreateTyre from "./sections/Admin/CreateTyre";
+import GreasePage from "./sections/Admin/GreasePage";
+import CreateGrease from "./sections/Admin/CreateGrease";
 
 
 const router = createBrowserRouter(
@@ -17,7 +19,9 @@ const router = createBrowserRouter(
     <Route index element={<Dashboard/>} loader={Dashboardoader} />
     <Route path="inventory" element={<Inventory/>} />
     <Route path="inventory/tyres" element={<TyrePage/>} />
+    <Route path="inventory/grease" element={<GreasePage/>} />
     <Route path="inventory/tyres/create" element={<CreateTyre/>}  />
+    <Route path="inventory/grease/create" element={<CreateGrease/>} />
         
       
 
