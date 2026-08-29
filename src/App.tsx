@@ -4,6 +4,8 @@ import AdminLayout , {AdminLoader} from './sections/Admin/AdminLayout';
 import SignIn , {SignInLoader} from "./sections/root/sigin";
 import Dashboard , {Dashboardoader} from "./sections/Admin/Dashboard";
 import Inventory from "./sections/Admin/Inventory";
+import TyrePage from "./sections/Admin/TyrePage";
+import CreateTyre from "./sections/Admin/CreateTyre";
 
 
 const router = createBrowserRouter(
@@ -14,8 +16,10 @@ const router = createBrowserRouter(
     <Route path="/" element={<AdminLayout />} loader={AdminLoader} >
     <Route index element={<Dashboard/>} loader={Dashboardoader} />
     <Route path="inventory" element={<Inventory/>} />
+    <Route path="inventory/tyres" element={<TyrePage/>} />
+    <Route path="inventory/tyres/create" element={<CreateTyre/>}  />
         
-     
+      
 
     </Route>
 
