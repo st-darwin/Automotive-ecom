@@ -102,7 +102,7 @@ export default function Cart() {
         reference: new Date().getTime().toString(),
         email: user?.email || 'customer@automotivestore.com',
         amount: subtotal * 100, // Paystack amount is in kobo
-        publicKey: import.meta.env.VITE_PAYSTACK_PUBLIC_KEY || 'pk_test_your_paystack_public_key_here',
+        publicKey: import.meta.env.VITE_PAYSTACK_PUBLIC_KEY,
     };
 
     const initializePaystackPayment = usePaystackPayment(paystackConfig);
