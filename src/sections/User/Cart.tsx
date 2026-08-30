@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import Header from '../../components/Header';
 import { database, appwriteConfig } from '../../appwrite/Client';
 import { getCurrentUser } from '../../appwrite/Auth';
-import { Trash2,  Package, ArrowRight } from 'lucide-react';
+import { Trash2, Package, ArrowRight, MessageSquare } from 'lucide-react';
 import { Query } from 'appwrite';
 
 interface CartItem {
@@ -92,6 +92,24 @@ export default function Cart() {
     );
 
     const subtotal = filteredCartItems.reduce((acc, item) => acc + (item.price || 0) * (item.quantity || 1), 0);
+
+    const handleWhatsAppNegotiation = () => {
+        const phoneNumber = '2348068200125';
+        const categoryName = activeTab === 'tyres' ? 'Tyres' : activeTab === 'grease' ? 'Grease & Lubricants' : 'Motor Parts';
+        
+        let message = `Hello! I would like to negotiate prices for the following items in my cart under *${categoryName}*:\n\n`;
+        
+        filteredCartItems.forEach((item, index) => {
+            message += `${index + 1}. *${item.name}* (Qty: ${item.quantity}) - ₦${((item.price || 0) * item.quantity).toLocaleString()}\n`;
+            if (item.sizeOrVolume) message + `   Spec: ${item.sizeOrVolume}\n`;
+        });
+
+        message += `\n*Category Subtotal: ₦${subtotal.toLocaleString()}*\n`;
+        message += `Please, let's discuss a custom discount or bulk pricing arrangement.`;
+
+        const encodedMessage = encodeURIComponent(message);
+        window.open(`https://wa.me/${phoneNumber}?text=${encodedMessage}`, '_blank');
+    };
 
     return (
         <div id="cart" className="space-y-6 sm:space-y-8 max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 pb-20 pt-4">
@@ -205,34 +223,61 @@ export default function Cart() {
                         ))}
                     </div>
 
-                    {/* Order Summary Box */}
-                    <div className="bg-white/90 backdrop-blur-xl border border-slate-200/70 rounded-3xl p-6 shadow-sm h-fit space-y-4">
-                        <h3 className="text-sm font-bold text-slate-900">Cart Summary</h3>
-                        <div className="space-y-2 text-xs text-slate-600 border-b border-slate-100 pb-4">
-                            <div className="flex justify-between">
-                                <span>Selected Category Subtotal</span>
-                                <span className="font-semibold text-slate-900">₦{subtotal.toLocaleString()}</span>
+                    {/* Order Summary & WhatsApp Negotiation Box */}
+                    <div className="space-y-4">
+                        <div className="bg-white/90 backdrop-blur-xl border border-slate-200/70 rounded-3xl p-6 shadow-sm h-fit space-y-4">
+                            <h3 className="text-sm font-bold text-slate-900">Cart Summary</h3>
+                            <div className="space-y-2 text-xs text-slate-600 border-b border-slate-100 pb-4">
+                                <div className="flex justify-between">
+                                    <span>Selected Category Subtotal</span>
+                                    <span className="font-semibold text-slate-900">₦{subtotal.toLocaleString()}</span>
+                                </div>
+                                <div className="flex justify-between">
+                                    <span>Total Category Items</span>
+                                    <span className="font-semibold text-slate-900">{filteredCartItems.reduce((a, b) => a + b.quantity, 0)}</span>
+                                </div>
                             </div>
-                            <div className="flex justify-between">
-                                <span>Total Category Items</span>
-                                <span className="font-semibold text-slate-900">{filteredCartItems.reduce((a, b) => a + b.quantity, 0)}</span>
+                            <div className="flex justify-between text-sm font-bold text-slate-900 pt-1">
+                                <span>Total</span>
+                                <span>₦{subtotal.toLocaleString()}</span>
                             </div>
+                            <button
+                                disabled={filteredCartItems.length === 0}
+                                className={`w-full py-3 rounded-2xl font-semibold text-xs flex items-center justify-center gap-2 transition-colors cursor-pointer ${
+                                    filteredCartItems.length > 0
+                                        ? 'bg-slate-900 hover:bg-slate-800 text-white shadow-md active:scale-95'
+                                        : 'bg-slate-100 text-slate-400 cursor-not-allowed'
+                                }`}
+                            >
+                                <span>Proceed to Checkout</span>
+                                <ArrowRight className="w-4 h-4" />
+                            </button>
                         </div>
-                        <div className="flex justify-between text-sm font-bold text-slate-900 pt-1">
-                            <span>Total</span>
-                            <span>₦{subtotal.toLocaleString()}</span>
+
+                        {/* WhatsApp Negotiation Card */}
+                        <div className="bg-gradient-to-br from-emerald-500 to-teal-600 text-white rounded-3xl p-6 shadow-md space-y-3">
+                            <div className="flex items-center gap-3">
+                                <div className="w-10 h-10 rounded-2xl bg-white/20 backdrop-blur-md flex items-center justify-center shrink-0">
+                                    <MessageSquare className="w-5 h-5 text-white" />
+                                </div>
+                                <div>
+                                    <h4 className="text-xs sm:text-sm font-bold">Want a Custom Price?</h4>
+                                    <p className="text-[11px] text-emerald-100">Negotiate bulk discounts directly via WhatsApp.</p>
+                                </div>
+                            </div>
+                            <button
+                                onClick={handleWhatsAppNegotiation}
+                                disabled={filteredCartItems.length === 0}
+                                className={`w-full py-2.5 rounded-2xl font-semibold text-xs flex items-center justify-center gap-2 transition-all cursor-pointer ${
+                                    filteredCartItems.length > 0
+                                        ? 'bg-white text-emerald-700 hover:bg-emerald-50 active:scale-95 shadow-sm'
+                                        : 'bg-white/40 text-white/70 cursor-not-allowed'
+                                }`}
+                            >
+                                <span>Negotiate on WhatsApp</span>
+                                <ArrowRight className="w-3.5 h-3.5" />
+                            </button>
                         </div>
-                        <button
-                            disabled={filteredCartItems.length === 0}
-                            className={`w-full py-3 rounded-2xl font-semibold text-xs flex items-center justify-center gap-2 transition-colors cursor-pointer ${
-                                filteredCartItems.length > 0
-                                    ? 'bg-slate-900 hover:bg-slate-800 text-white shadow-md active:scale-95'
-                                    : 'bg-slate-100 text-slate-400 cursor-not-allowed'
-                            }`}
-                        >
-                            <span>Proceed to Checkout</span>
-                            <ArrowRight className="w-4 h-4" />
-                        </button>
                     </div>
                 </div>
             )}
