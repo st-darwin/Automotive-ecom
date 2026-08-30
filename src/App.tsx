@@ -15,6 +15,9 @@ import TyreOrder from "./sections/Admin/TyreOrder";
 import GreaseOrder from "./sections/Admin/GreaseOrder";
 import MotorPartsOrder from "./sections/Admin/MotorPartsOrder";
 import CustomerPage from "./sections/Admin/CustomerPage";
+import UserLayout , {UserLayoutLoader} from "./sections/User/UserLayout";
+import CustomerProducts, { Loader } from "./sections/User/Products";
+import Cart from "./sections/User/Cart";
 
 
 
@@ -37,6 +40,16 @@ const router = createBrowserRouter(
     <Route  path="orders/grease" element={<GreaseOrder/>} />
     <Route  path="orders/motor-parts" element={<MotorPartsOrder/>}/>
     <Route path="customers" element={<CustomerPage/>} />
+
+
+    </Route>
+
+
+    <Route path="/Customer" element={<UserLayout/>} loader={UserLayoutLoader}>
+    <Route index element={<CustomerProducts/>} loader={Loader} />
+    <Route path="cart" element={<Cart/>} />
+
+
 
     </Route>
 

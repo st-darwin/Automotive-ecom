@@ -2,7 +2,7 @@ import { useEffect, useState, useRef } from 'react';
 import { useLoaderData, useNavigate } from 'react-router-dom';
 import Header from '../../components/Header';
 import { getUser } from '../../appwrite/Auth';
-import { ShoppingBag, Users, DollarSign, Clock, ArrowUpRight, Calendar, ChevronLeft, ChevronRight, Layers, AlertTriangle, Download, Package } from 'lucide-react';
+import { ShoppingBag, Users, DollarSign, Clock, ArrowUpRight, Calendar, ChevronLeft, ChevronRight, Layers,  Download, Package } from 'lucide-react';
 import { appwriteConfig, database } from '../../appwrite/Client';
 
 export const Dashboardoader = async () => {
