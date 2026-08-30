@@ -2,8 +2,9 @@ import { useEffect, useState } from 'react';
 import Header from '../../components/Header';
 import { database, appwriteConfig } from '../../appwrite/Client';
 import { getCurrentUser } from '../../appwrite/Auth';
-import { Trash2, Package, ArrowRight, MessageSquare } from 'lucide-react';
-import { Query } from 'appwrite';
+import { Trash2, Package, ArrowRight, MessageSquare, CreditCard } from 'lucide-react';
+import { Query, ID } from 'appwrite';
+import { usePaystackPayment } from 'react-paystack';
 
 interface CartItem {
     $id: string;
@@ -15,25 +16,28 @@ interface CartItem {
     quantity: number;
     imageUrl?: string;
     sizeOrVolume?: string;
+    brand?: string;
+    category?: string;
 }
 
 export default function Cart() {
     const [cartItems, setCartItems] = useState<CartItem[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
     const [activeTab, setActiveTab] = useState<'tyres' | 'grease' | 'motorParts'>('tyres');
-    const [userId, setUserId] = useState<string | null>(null);
+    const [user, setUser] = useState<any>(null);
+    const [isProcessingPayment, setIsProcessingPayment] = useState<boolean>(false);
 
     useEffect(() => {
         const fetchUserDataAndCart = async () => {
             setLoading(true);
             try {
-                const user = await getCurrentUser();
-                if (user && user.$id) {
-                    setUserId(user.$id);
+                const currentUser = await getCurrentUser();
+                if (currentUser && currentUser.$id) {
+                    setUser(currentUser);
                     const response = await database.listDocuments(
                         appwriteConfig.databaseId,
                         appwriteConfig.cartCollection || 'cart',
-                        [Query.equal('userId', user.$id)]
+                        [Query.equal('userId', currentUser.$id)]
                     );
                     setCartItems(response.documents as unknown as CartItem[]);
                 }
@@ -88,10 +92,171 @@ export default function Cart() {
 
     // Filter items based on the active tab and current verified userId
     const filteredCartItems = cartItems.filter(
-        item => item.productType === activeTab && (!userId || item.userId === userId)
+        item => item.productType === activeTab && (!user?.$id || item.userId === user.$id)
     );
 
     const subtotal = filteredCartItems.reduce((acc, item) => acc + (item.price || 0) * (item.quantity || 1), 0);
+
+    // Paystack Configuration
+    const paystackConfig = {
+        reference: new Date().getTime().toString(),
+        email: user?.email || 'customer@automotivestore.com',
+        amount: subtotal * 100, // Paystack amount is in kobo
+        publicKey: import.meta.env.VITE_PAYSTACK_PUBLIC_KEY || 'pk_test_your_paystack_public_key_here',
+    };
+
+    const initializePaystackPayment = usePaystackPayment(paystackConfig);
+
+    const handlePaymentSuccess = async (reference: any) => {
+        setIsProcessingPayment(true);
+        try {
+            const customerName = user?.name || 'Valued Customer';
+            const accountId = user?.$id;
+
+            for (const item of filteredCartItems) {
+                const unitPrice = item.price || 0;
+                const quantity = item.quantity || 1;
+                const totalPrice = unitPrice * quantity;
+
+                // 1. Create Order in the appropriate collection based on activeTab
+                if (activeTab === 'tyres') {
+                    await database.createDocument(
+                        appwriteConfig.databaseId,
+                        appwriteConfig.tyreOrdersCollecton|| 'tyre-order',
+                        ID.unique(),
+                        {
+                            customerName,
+                            tyreName: item.name,
+                            brand: item.brand || 'Generic',
+                            size: item.sizeOrVolume || 'Standard',
+                            unitPrice,
+                            quantity,
+                            totalPrice,
+                            paymentStatus: 'paid',
+                            accountId
+                        }
+                    );
+
+                    // Reduce stock in inventory (tyreCollection)
+                    try {
+                        const productDoc = await database.getDocument(
+                            appwriteConfig.databaseId,
+                            appwriteConfig.tyreColection || 'tyres',
+                            item.productId
+                        );
+                        const currentStock = productDoc.stock ?? productDoc.quantity ?? 0;
+                        const newStock = Math.max(0, currentStock - quantity);
+                        await database.updateDocument(
+                            appwriteConfig.databaseId,
+                            appwriteConfig.tyreColection || 'tyres',
+                            item.productId,
+                            { stock: newStock }
+                        );
+                    } catch (err) {
+                        console.error('Error updating tyre stock:', err);
+                    }
+
+                } else if (activeTab === 'grease') {
+                    await database.createDocument(
+                        appwriteConfig.databaseId,
+                        appwriteConfig.greaseOrdersCollection || 'grease-order',
+                        ID.unique(),
+                        {
+                            customerName,
+                            greaseName: item.name,
+                            brand: item.brand || 'Generic',
+                            volume: item.sizeOrVolume || 'Standard',
+                            unitPrice,
+                            quantity,
+                            totalPrice,
+                            paymentStatus: 'paid',
+                            accountId
+                        }
+                    );
+
+                    // Reduce stock in inventory (greaseCollection)
+                    try {
+                        const productDoc = await database.getDocument(
+                            appwriteConfig.databaseId,
+                            appwriteConfig.greaseCollection || 'grease',
+                            item.productId
+                        );
+                        const currentStock = productDoc.stock ?? productDoc.quantity ?? 0;
+                        const newStock = Math.max(0, currentStock - quantity);
+                        await database.updateDocument(
+                            appwriteConfig.databaseId,
+                            appwriteConfig.greaseCollection || 'grease',
+                            item.productId,
+                            { stock: newStock }
+                        );
+                    } catch (err) {
+                        console.error('Error updating grease stock:', err);
+                    }
+
+                } else if (activeTab === 'motorParts') {
+                    await database.createDocument(
+                        appwriteConfig.databaseId,
+                        appwriteConfig.motorPartsOrdersCollection || 'motorParts-order',
+                        ID.unique(),
+                        {
+                            customerName,
+                            partName: item.name,
+                            brand: item.brand || 'Generic',
+                            category: item.category || 'General',
+                            unitPrice,
+                            quantity,
+                            totalPrice,
+                            paymentStatus: 'paid',
+                            accountId
+                        }
+                    );
+
+                    // Reduce stock in inventory (motorPartsCollection)
+                    try {
+                        const productDoc = await database.getDocument(
+                            appwriteConfig.databaseId,
+                            appwriteConfig.motorPartsCollection || 'motorParts',
+                            item.productId
+                        );
+                        const currentStock = productDoc.stock ?? productDoc.quantity ?? 0;
+                        const newStock = Math.max(0, currentStock - quantity);
+                        await database.updateDocument(
+                            appwriteConfig.databaseId,
+                            appwriteConfig.motorPartsCollection || 'motorParts',
+                            item.productId,
+                            { stock: newStock }
+                        );
+                    } catch (err) {
+                        console.error('Error updating motor parts stock:', err);
+                    }
+                }
+
+                // 2. Remove checked out item from cart
+                await database.deleteDocument(
+                    appwriteConfig.databaseId,
+                    appwriteConfig.cartCollection || 'cart',
+                    item.$id
+                );
+            }
+
+            // Refresh cart state
+            setCartItems(prev => prev.filter(item => item.productType !== activeTab));
+            alert('Payment successful! Your order has been placed and inventory updated.');
+        } catch (error) {
+            console.error('Error processing post-payment actions:', error);
+            alert('Payment was successful, but there was an error saving your order. Please contact support.');
+        } finally {
+            setIsProcessingPayment(false);
+        }
+    };
+
+    const handleCheckout = () => {
+        if (subtotal <= 0) return;
+        initializePaystackPayment({
+            onSuccess: handlePaymentSuccess,
+            onClose: () => console.log('Payment closed'),
+        });
+    };
 
     const handleWhatsAppNegotiation = () => {
         const phoneNumber = '2348068200125';
@@ -101,7 +266,7 @@ export default function Cart() {
         
         filteredCartItems.forEach((item, index) => {
             message += `${index + 1}. *${item.name}* (Qty: ${item.quantity}) - ₦${((item.price || 0) * item.quantity).toLocaleString()}\n`;
-            if (item.sizeOrVolume) message + `   Spec: ${item.sizeOrVolume}\n`;
+            if (item.sizeOrVolume) message += `   Spec: ${item.sizeOrVolume}\n`;
         });
 
         message += `\n*Category Subtotal: ₦${subtotal.toLocaleString()}*\n`;
@@ -130,7 +295,7 @@ export default function Cart() {
                     { id: 'grease', label: 'Grease & Lubricants' },
                     { id: 'motorParts', label: 'Motor Parts' }
                 ].map(tab => {
-                    const count = cartItems.filter(item => item.productType === tab.id && (!userId || item.userId === userId)).length;
+                    const count = cartItems.filter(item => item.productType === tab.id && (!user?.$id || item.userId === user.$id)).length;
                     return (
                         <button
                             key={tab.id}
@@ -151,8 +316,13 @@ export default function Cart() {
             </div>
 
             {/* Cart Content */}
-            {loading ? (
+            {loading || isProcessingPayment ? (
                 <div className="space-y-4">
+                    {isProcessingPayment && (
+                        <div className="bg-blue-50 border border-blue-200 text-blue-700 px-4 py-3 rounded-2xl text-xs font-semibold text-center animate-pulse">
+                            Processing payment and updating your orders & inventory...
+                        </div>
+                    )}
                     {[1, 2].map(n => (
                         <div key={n} className="bg-white/60 border border-slate-200/60 rounded-3xl h-24 animate-pulse" />
                     ))}
@@ -223,7 +393,7 @@ export default function Cart() {
                         ))}
                     </div>
 
-                    {/* Order Summary & WhatsApp Negotiation Box */}
+                    {/* Order Summary & Paystack Checkout Box */}
                     <div className="space-y-4">
                         <div className="bg-white/90 backdrop-blur-xl border border-slate-200/70 rounded-3xl p-6 shadow-sm h-fit space-y-4">
                             <h3 className="text-sm font-bold text-slate-900">Cart Summary</h3>
@@ -242,15 +412,16 @@ export default function Cart() {
                                 <span>₦{subtotal.toLocaleString()}</span>
                             </div>
                             <button
-                                disabled={filteredCartItems.length === 0}
+                                onClick={handleCheckout}
+                                disabled={filteredCartItems.length === 0 || isProcessingPayment}
                                 className={`w-full py-3 rounded-2xl font-semibold text-xs flex items-center justify-center gap-2 transition-colors cursor-pointer ${
                                     filteredCartItems.length > 0
-                                        ? 'bg-slate-900 hover:bg-slate-800 text-white shadow-md active:scale-95'
+                                        ? 'bg-indigo-600 hover:bg-indigo-700 text-white shadow-md active:scale-95'
                                         : 'bg-slate-100 text-slate-400 cursor-not-allowed'
                                 }`}
                             >
-                                <span>Proceed to Checkout</span>
-                                <ArrowRight className="w-4 h-4" />
+                                <CreditCard className="w-4 h-4" />
+                                <span>Pay with Paystack (₦{subtotal.toLocaleString()})</span>
                             </button>
                         </div>
 
