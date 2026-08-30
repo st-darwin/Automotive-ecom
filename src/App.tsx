@@ -17,6 +17,7 @@ import MotorPartsOrder from "./sections/Admin/MotorPartsOrder";
 import CustomerPage from "./sections/Admin/CustomerPage";
 
 
+
 const router = createBrowserRouter(
   createRoutesFromElements(
 
@@ -27,7 +28,6 @@ const router = createBrowserRouter(
     <Route path="inventory" element={<Inventory/>} />
     <Route path="inventory/tyres" element={<TyrePage/>} />
     <Route path="inventory/grease" element={<GreasePage/>} />
-    <Route  path="inventory/MotorParts" element={<MotorPartsPage/>}/> 
     <Route path="inventory/tyres/create" element={<CreateTyre/>}  />
     <Route path="inventory/grease/create" element={<CreateGrease/>} />
     <Route  path="inventory/motor-parts" element={<MotorPartsPage/>}/> 
@@ -38,12 +38,13 @@ const router = createBrowserRouter(
     <Route  path="orders/motor-parts" element={<MotorPartsOrder/>}/>
     <Route path="customers" element={<CustomerPage/>} />
 
-
-      
-
     </Route>
 
+
+
      <Route path="/sign-in" element={<SignIn />} loader={SignInLoader} />
+
+    
     </>
 
 
