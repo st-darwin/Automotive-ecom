@@ -90,9 +90,9 @@ export default function CustomerProducts() {
                         loadedCartItems.push({
                             $id: doc.productId,
                             name: doc.name,
-                            brand: '',
+                            brand: doc.brand,
                             price: doc.price,
-                            stock: 99,
+                            stock: doc.stock,
                             type: doc.productType
                         });
                     }
@@ -154,6 +154,7 @@ export default function CustomerProducts() {
                         productType: product.type,
                         name: product.name,
                         price: product.price,
+                        brand : product.brand,
                         quantity: 1,
                         imageUrl: product.imageUrl || '',
                         sizeOrVolume: product.size || product.volume || ''

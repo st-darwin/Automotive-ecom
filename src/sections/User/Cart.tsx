@@ -5,6 +5,7 @@ import { getCurrentUser } from '../../appwrite/Auth';
 import { Trash2, Package, ArrowRight, MessageSquare, CreditCard } from 'lucide-react';
 import { Query, ID } from 'appwrite';
 import { usePaystackPayment } from 'react-paystack';
+import { useNavigate } from 'react-router-dom';
 
 interface CartItem {
     $id: string;
@@ -26,6 +27,7 @@ export default function Cart() {
     const [activeTab, setActiveTab] = useState<'tyres' | 'grease' | 'motorParts'>('tyres');
     const [user, setUser] = useState<any>(null);
     const [isProcessingPayment, setIsProcessingPayment] = useState<boolean>(false);
+    const navigate = useNavigate();
 
     useEffect(() => {
         const fetchUserDataAndCart = async () => {
@@ -107,23 +109,25 @@ export default function Cart() {
 
     const initializePaystackPayment = usePaystackPayment(paystackConfig);
 
-    const handlePaymentSuccess = async (reference: any) => {
+    const handlePaymentSuccess = async (_reference: any) => {
         setIsProcessingPayment(true);
         try {
             const customerName = user?.name || 'Valued Customer';
             const accountId = user?.$id;
+            const checkoutTimestamp = new Date().toISOString();
 
             for (const item of filteredCartItems) {
                 const unitPrice = item.price || 0;
                 const quantity = item.quantity || 1;
                 const totalPrice = unitPrice * quantity;
+                const orderId = ID.unique();
 
                 // 1. Create Order in the appropriate collection based on activeTab
                 if (activeTab === 'tyres') {
                     await database.createDocument(
                         appwriteConfig.databaseId,
-                        appwriteConfig.tyreOrdersCollecton|| 'tyre-order',
-                        ID.unique(),
+                        appwriteConfig.tyreOrdersCollecton || 'tyre-order',
+                        orderId,
                         {
                             customerName,
                             tyreName: item.name,
@@ -160,7 +164,7 @@ export default function Cart() {
                     await database.createDocument(
                         appwriteConfig.databaseId,
                         appwriteConfig.greaseOrdersCollection || 'grease-order',
-                        ID.unique(),
+                        orderId,
                         {
                             customerName,
                             greaseName: item.name,
@@ -197,7 +201,7 @@ export default function Cart() {
                     await database.createDocument(
                         appwriteConfig.databaseId,
                         appwriteConfig.motorPartsOrdersCollection || 'motorParts-order',
-                        ID.unique(),
+                        orderId,
                         {
                             customerName,
                             partName: item.name,
@@ -241,11 +245,17 @@ export default function Cart() {
 
             // Refresh cart state
             setCartItems(prev => prev.filter(item => item.productType !== activeTab));
-            alert('Payment successful! Your order has been placed and inventory updated.');
+            
+            // Navigate to Receipt Page passing state cleanly
+            navigate('/Customer/receipt', { 
+                state: { 
+                    createdAt: checkoutTimestamp, 
+                    type: activeTab 
+                } 
+            });
         } catch (error) {
             console.error('Error processing post-payment actions:', error);
             alert('Payment was successful, but there was an error saving your order. Please contact support.');
-        } finally {
             setIsProcessingPayment(false);
         }
     };
@@ -411,18 +421,18 @@ export default function Cart() {
                                 <span>Total</span>
                                 <span>₦{subtotal.toLocaleString()}</span>
                             </div>
-                          <button
-                           onClick={handleCheckout}
-                             disabled={filteredCartItems.length === 0 || isProcessingPayment}
-                             className={`w-full py-3 rounded-2xl font-semibold text-xs flex items-center justify-center gap-2 transition-colors cursor-pointer ${
-                    filteredCartItems.length > 0
-                      ? 'bg-gradient-to-r from-zinc-900 via-neutral-900 to-slate-900 hover:from-black hover:to-slate-800 text-white shadow-md active:scale-95'
-                     : 'bg-slate-100 text-slate-400 cursor-not-allowed'
-                          }`}
->
-    <CreditCard className="w-4 h-4" />
-    <span>Pay with Paystack (₦{subtotal.toLocaleString()})</span>
-</button>
+                            <button
+                                onClick={handleCheckout}
+                                disabled={filteredCartItems.length === 0 || isProcessingPayment}
+                                className={`w-full py-3 rounded-2xl font-semibold text-xs flex items-center justify-center gap-2 transition-colors cursor-pointer ${
+                                    filteredCartItems.length > 0
+                                        ? 'bg-gradient-to-r from-zinc-900 via-neutral-900 to-slate-900 hover:from-black hover:to-slate-800 text-white shadow-md active:scale-95'
+                                        : 'bg-slate-100 text-slate-400 cursor-not-allowed'
+                                }`}
+                            >
+                                <CreditCard className="w-4 h-4" />
+                                <span>Pay with Paystack (₦{subtotal.toLocaleString()})</span>
+                            </button>
                         </div>
 
                         {/* WhatsApp Negotiation Card */}
