@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { ShoppingCart, ClipboardList, LogOut, Menu, X } from 'lucide-react';
 import logo from '../assets/icons/logo.png';
 
+
 interface UserNavbarProps {
     cartCount?: number;
     onCartClick?: () => void;

@@ -33,7 +33,8 @@ export default function UserLayout() {
             <UserNavbar
                 cartCount={0}
                 onCartClick={() => navigate('/Customer/cart')}
-                onOrdersClick={() => navigate('/Customer/orders')}
+                onOrdersClick={() => navigate('/Customer/payment-history')}
+
                 onLogout={handleLogout}
             />
 

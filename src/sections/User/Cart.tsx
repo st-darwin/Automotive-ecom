@@ -250,7 +250,8 @@ export default function Cart() {
             navigate('/Customer/receipt', { 
                 state: { 
                     createdAt: checkoutTimestamp, 
-                    type: activeTab 
+                    type: activeTab ,
+                    accountId: accountId
                 } 
             });
         } catch (error) {

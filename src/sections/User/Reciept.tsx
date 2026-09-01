@@ -20,6 +20,7 @@ interface OrderDocument {
     size?: string;
     volume?: string;
     category?: string;
+    accountId?: string;
 }
 
 export default function Receipt() {
@@ -31,6 +32,7 @@ export default function Receipt() {
     const orderId = searchParams.get('orderId');
     const orderType = (searchParams.get('type') as 'tyres' | 'grease' | 'motorParts') || location.state?.type || 'tyres';
     const stateCreatedAt = location.state?.createdAt;
+    const accountId = location.state?.accountId || searchParams.get('accountId');
 
     const [orders, setOrders] = useState<OrderDocument[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
@@ -45,6 +47,7 @@ export default function Receipt() {
                     collectionId = appwriteConfig.motorPartsOrdersCollection || 'motorParts-order';
                 }
 
+                // 1. If explicit orderId is given, try fetching directly
                 if (orderId) {
                     try {
                         const doc = await database.getDocument(
@@ -62,8 +65,11 @@ export default function Receipt() {
                     }
                 }
 
-                // If no exact orderId or fallback needed, fetch the most recent paid orders matching this category/session timeframe
-                const queries = [Query.orderDesc('$createdAt'), Query.limit(10)];
+                // 2. Query orders filtered by accountId if available, ordered by newest first
+                const queries = [Query.orderDesc('$createdAt'), Query.limit(15)];
+                if (accountId) {
+                    queries.push(Query.equal('accountId', accountId));
+                }
                 
                 const response = await database.listDocuments(
                     appwriteConfig.databaseId,
@@ -73,12 +79,12 @@ export default function Receipt() {
 
                 let matchedDocs = response.documents as unknown as OrderDocument[];
 
-                // If we have a stateCreatedAt timestamp from cart checkout, filter documents created around that timestamp (e.g. within last 60 seconds)
+                // 3. Filter documents created around the checkout timestamp (e.g. within last 2 minutes)
                 if (stateCreatedAt) {
                     const checkoutTime = new Date(stateCreatedAt).getTime();
                     const filtered = matchedDocs.filter(doc => {
                         const docTime = new Date(doc.$createdAt).getTime();
-                        return Math.abs(docTime - checkoutTime) < 120000; // within 2 minutes
+                        return Math.abs(docTime - checkoutTime) < 120000; // 2 minutes window
                     });
                     if (filtered.length > 0) {
                         matchedDocs = filtered;
@@ -94,7 +100,7 @@ export default function Receipt() {
         };
 
         fetchOrderDetails();
-    }, [orderId, orderType, stateCreatedAt]);
+    }, [orderId, orderType, stateCreatedAt, accountId]);
 
     const getItemName = (order: OrderDocument) => {
         return order.tyreName || order.greaseName || order.partName || 'Automotive Item';
@@ -124,7 +130,7 @@ export default function Receipt() {
                 <div className="bg-white/90 border border-slate-200/60 rounded-3xl p-12 text-center space-y-4">
                     <Package className="w-12 h-12 text-slate-300 mx-auto" />
                     <h2 className="text-sm font-bold text-slate-800">Receipt Not Found</h2>
-                    <p className="text-xs text-slate-500">We couldn't locate recent order records for this session.</p>
+                    <p className="text-xs text-slate-500">We couldn't locate recent order records matching your account session.</p>
                     <button
                         onClick={() => navigate('/Customer')}
                         className="px-5 py-2.5 bg-slate-900 text-white rounded-2xl text-xs font-semibold cursor-pointer"

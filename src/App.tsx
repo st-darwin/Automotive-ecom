@@ -19,6 +19,7 @@ import UserLayout , {UserLayoutLoader} from "./sections/User/UserLayout";
 import CustomerProducts, { Loader } from "./sections/User/Products";
 import Cart from "./sections/User/Cart";
 import Receipt from "./sections/User/Reciept";
+import Payments from "./sections/User/Payments";
 
 
 
@@ -41,6 +42,7 @@ const router = createBrowserRouter(
     <Route  path="orders/grease" element={<GreaseOrder/>} />
     <Route  path="orders/motor-parts" element={<MotorPartsOrder/>}/>
     <Route path="customers" element={<CustomerPage/>} />
+  
     
 
 
@@ -51,6 +53,7 @@ const router = createBrowserRouter(
     <Route index element={<CustomerProducts/>} loader={Loader} />
     <Route path="cart" element={<Cart/>} />
     <Route path="receipt" element={<Receipt/>} />
+    <Route path="payment-history" element={<Payments/>} />
     </Route>
 
 
