@@ -209,7 +209,7 @@ export default function Payments() {
                                             key={tx.checkoutKey}
                                             className="bg-white/95 backdrop-blur-xl border border-slate-200/80 rounded-2xl p-4 sm:p-5 shadow-sm space-y-4 hover:border-slate-300 transition-all"
                                         >
-                                            {/* Transaction Meta Header */}
+                                            {/* Transaction Meta Header  */}
                                             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 border-b border-slate-100">
                                                 <div className="flex items-center gap-2">
                                                     <span className="px-2 py-0.5 bg-emerald-50 text-emerald-700 text-[10px] font-bold uppercase rounded-full">
