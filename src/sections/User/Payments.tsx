@@ -204,51 +204,59 @@ export default function Payments() {
                                 </div>
 
                                 <div className="space-y-3">
-                                    {group.map((tx) => (
-                                        <div
-                                            key={tx.checkoutKey}
-                                            className="bg-white/95 backdrop-blur-xl border border-slate-200/80 rounded-2xl p-4 sm:p-5 shadow-sm space-y-4 hover:border-slate-300 transition-all"
-                                        >
-                                            {/* Transaction Meta Header  */}
-                                            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 border-b border-slate-100">
-                                                <div className="flex items-center gap-2">
-                                                    <span className="px-2 py-0.5 bg-emerald-50 text-emerald-700 text-[10px] font-bold uppercase rounded-full">
-                                                        {tx.paymentStatus}
-                                                    </span>
-                                                    <span className="text-[11px] text-slate-400 flex items-center gap-1">
-                                                        <Clock className="w-3 h-3" />
-                                                        {new Date(tx.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                                                    </span>
-                                                </div>
-                                                <button
-                                                    onClick={() => handleViewReceipt(tx)}
-                                                    className="inline-flex items-center justify-center gap-1.5 px-3 py-1.5 bg-slate-900 hover:bg-slate-800 text-white rounded-xl text-xs font-semibold transition-colors cursor-pointer self-start sm:self-auto"
-                                                >
-                                                    <Receipt className="w-3.5 h-3.5" />
-                                                    <span>View Receipt</span>
-                                                </button>
-                                            </div>
+                                    {group.map((tx) => {
+                                        const txTimeStr = new Date(tx.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                                        const txDateOnlyStr = new Date(tx.createdAt).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' });
 
-                                            {/* Joined Items List (e.g. Item A and Item B from same checkout session) */}
-                                            <div className="space-y-2">
-                                                {tx.items.map((item) => (
-                                                    <div key={item.$id} className="flex items-center justify-between text-xs bg-slate-50/60 px-3 py-2 rounded-xl border border-slate-100">
-                                                        <div>
-                                                            <span className="font-bold text-slate-800">{getItemName(item)}</span>
-                                                            <span className="text-slate-500 ml-2">({item.brand || 'Generic'} • Qty: {item.quantity})</span>
-                                                        </div>
-                                                        <span className="font-semibold text-slate-700">₦{(item.totalPrice || 0).toLocaleString()}</span>
+                                        return (
+                                            <div
+                                                key={tx.checkoutKey}
+                                                className="bg-white/95 backdrop-blur-xl border border-slate-200/80 rounded-2xl p-4 sm:p-5 shadow-sm space-y-4 hover:border-slate-300 transition-all"
+                                            >
+                                                {/* Transaction Meta Header */}
+                                                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 border-b border-slate-100">
+                                                    <div className="flex items-center gap-2">
+                                                        <span className="px-2 py-0.5 bg-emerald-50 text-emerald-700 text-[10px] font-bold uppercase rounded-full">
+                                                            {tx.paymentStatus}
+                                                        </span>
+                                                        <span className="text-[11px] text-slate-500 font-medium flex items-center gap-1.5">
+                                                            <Calendar className="w-3 h-3 text-slate-400" />
+                                                            <span>{txDateOnlyStr}</span>
+                                                            <span className="text-slate-300">•</span>
+                                                            <Clock className="w-3 h-3 text-slate-400" />
+                                                            <span>{txTimeStr}</span>
+                                                        </span>
                                                     </div>
-                                                ))}
-                                            </div>
+                                                    <button
+                                                        onClick={() => handleViewReceipt(tx)}
+                                                        className="inline-flex items-center justify-center gap-1.5 px-3 py-1.5 bg-slate-900 hover:bg-slate-800 text-white rounded-xl text-xs font-semibold transition-colors cursor-pointer self-start sm:self-auto"
+                                                    >
+                                                        <Receipt className="w-3.5 h-3.5" />
+                                                        <span>View Receipt</span>
+                                                    </button>
+                                                </div>
 
-                                            {/* Footer Total */}
-                                            <div className="flex items-center justify-between pt-2 text-xs font-bold text-slate-900">
-                                                <span className="text-slate-500">Session Total ({tx.items.length} items)</span>
-                                                <span className="text-sm font-extrabold text-slate-900">₦{tx.totalAmount.toLocaleString()}</span>
+                                                {/* Joined Items List */}
+                                                <div className="space-y-2">
+                                                    {tx.items.map((item) => (
+                                                        <div key={item.$id} className="flex items-center justify-between text-xs bg-slate-50/60 px-3 py-2 rounded-xl border border-slate-100">
+                                                            <div>
+                                                                <span className="font-bold text-slate-800">{getItemName(item)}</span>
+                                                                <span className="text-slate-500 ml-2">({item.brand || 'Generic'} • Qty: {item.quantity})</span>
+                                                            </div>
+                                                            <span className="font-semibold text-slate-700">₦{(item.totalPrice || 0).toLocaleString()}</span>
+                                                        </div>
+                                                    ))}
+                                                </div>
+
+                                                {/* Footer Total */}
+                                                <div className="flex items-center justify-between pt-2 text-xs font-bold text-slate-900">
+                                                    <span className="text-slate-500">Session Total ({tx.items.length} items)</span>
+                                                    <span className="text-sm font-extrabold text-slate-900">₦{tx.totalAmount.toLocaleString()}</span>
+                                                </div>
                                             </div>
-                                        </div>
-                                    ))}
+                                        );
+                                    })}
                                 </div>
                             </div>
                         );
