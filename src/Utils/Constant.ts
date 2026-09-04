@@ -31,4 +31,10 @@ export const adminSidebarItems = [
     route: "settings",
     icon: "settings",
   },
+ 
+{
+  label: "Walk-in Sales", 
+  route: "/manual-enteries",
+  icon: "plus-circle"
+},
 ];

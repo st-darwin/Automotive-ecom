@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import { adminSidebarItems } from '../Utils/Constant';
-import { Menu, X, LogOut, Car, LayoutDashboard, Package, ShoppingCart, Users, BarChart3, Settings } from 'lucide-react';
+import { Menu, X, PlusCircle , LogOut, Car, LayoutDashboard, Package, ShoppingCart, Users, BarChart3, Settings } from 'lucide-react';
 import { logoutUser } from '../appwrite/Auth';
 
 const getIcon = (iconName: string) => {
@@ -18,6 +18,8 @@ const getIcon = (iconName: string) => {
       return <BarChart3 className="w-4 h-4" />;
     case 'settings':
       return <Settings className="w-4 h-4" />;
+    case 'plus-circle': // Add this case for your manual entries item
+      return <PlusCircle className="w-4 h-4" />;
     default:
       return <Car className="w-4 h-4" />;
   }
