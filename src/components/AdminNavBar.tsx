@@ -3,6 +3,7 @@ import { NavLink } from 'react-router-dom';
 import { adminSidebarItems } from '../Utils/Constant';
 import { Menu, X, PlusCircle , LogOut, Car, LayoutDashboard, Package, ShoppingCart, Users, BarChart3, Settings } from 'lucide-react';
 import { logoutUser } from '../appwrite/Auth';
+import logo from '../assets/icons/logo.png';
 
 const getIcon = (iconName: string) => {
   switch (iconName) {
@@ -38,8 +39,8 @@ const AdminSidebar = () => {
       {/* Mobile Floating Header Bar */}
       <div className="lg:hidden sticky top-4 z-50 mx-4 flex items-center justify-between bg-white/80 backdrop-blur-xl px-4 py-3 rounded-2xl shadow-sm border border-slate-100">
         <div className="flex items-center gap-3">
-          <div className="p-2.5 bg-blue-400 rounded-xl text-white shadow-sm shadow-blue-400/30">
-            <Car className="w-4 h-4" />
+          <div className="p-1.5 rounded-xl text-white shadow-sm shadow-blue-400/30">
+            <img className='h-8 w-8 rounded-full' src={logo} alt="" />
           </div>
           <div>
             <span className="font-bold text-sm tracking-tight text-slate-900 block leading-none">Kinchris Switch</span>
@@ -99,8 +100,8 @@ const AdminSidebar = () => {
       <aside className="hidden lg:flex flex-col fixed inset-y-4 left-4 w-64 bg-white/80 backdrop-blur-xl rounded-3xl shadow-sm border border-slate-100 z-30 overflow-hidden transition-all duration-300">
         {/* Brand Header */}
         <div className="flex items-center gap-3 px-6 h-20 border-b border-slate-100/80">
-          <div className="p-2.5 bg-blue-400 rounded-2xl text-white shadow-sm shadow-blue-400/30">
-            <Car className="w-5 h-5" />
+          <div className="p-1.5  rounded-2xl text-white shadow-sm shadow-blue-400/30">
+         <img className='h-8 w-8 rounded-full' src={logo} alt="" />
           </div>
           <div>
             <span className="font-bold text-sm tracking-tight text-slate-900 block leading-tight">Kinchris Switch</span>
