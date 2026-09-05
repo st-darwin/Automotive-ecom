@@ -62,7 +62,9 @@ export default function Receipt() {
                             setLoading(false);
                             return;
                         }
-                    } catch {}
+                    } catch(e) {
+                        console.error('Error fetching specific order document:', e);
+                    }
                 }
 
                 const queries = [Query.orderDesc('$createdAt'), Query.limit(15)];
