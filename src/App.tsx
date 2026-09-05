@@ -21,6 +21,7 @@ import Cart from "./sections/User/Cart";
 import Receipt from "./sections/User/Reciept";
 import Payments from "./sections/User/Payments";
 import ManualEntering from "./sections/Admin/ManualEntering";
+import Analytics from "./sections/Admin/Analytics";
 
 
 
@@ -43,6 +44,7 @@ const router = createBrowserRouter(
     <Route  path="orders/grease" element={<GreaseOrder/>} />
     <Route  path="orders/motor-parts" element={<MotorPartsOrder/>}/>
     <Route path="customers" element={<CustomerPage/>} />
+    <Route path="analytics" element={<Analytics/>} />
     <Route  path="manual-enteries" element={<ManualEntering/>}/>
   
     
