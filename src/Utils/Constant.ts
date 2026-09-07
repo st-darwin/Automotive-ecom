@@ -15,12 +15,15 @@ export const adminSidebarItems = [
     icon: "shopping-cart",
   },
   {
+    label: "Notifications",
+    route: "/notifications",
+    icon: "bell",
+  },
+  {
     label: "Customers",
     route: "customers",
     icon: "users",
   },
-
-
   {
     label: "Analytics",
     route: "analytics",
@@ -31,10 +34,9 @@ export const adminSidebarItems = [
     route: "settings",
     icon: "settings",
   },
- 
-{
-  label: "Walk-in Sales", 
-  route: "/manual-enteries",
-  icon: "plus-circle"
-},
+  {
+    label: "Walk-in Sales", 
+    route: "/manual-enteries",
+    icon: "plus-circle"
+  },
 ];
