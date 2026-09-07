@@ -16,7 +16,8 @@ export const appwriteConfig = {
        tyreOrdersCollecton : import.meta.env.VITE_APPWRITE_TYRE_ORDER,
        greaseOrdersCollection: import.meta.env.VITE_APPWRITE_GREASE_ORDER,
        motorPartsOrdersCollection: import.meta.env.VITE_APPWRITE_MOTOR_PARTS_ORDER,
-       cartCollection: import.meta.env.VITE_APPWRITE_CART_ID
+       cartCollection: import.meta.env.VITE_APPWRITE_CART_ID,
+       adminNotificationsCollection: import.meta.env.VITE_APPWRITE_ADMIN_NOTIFICATION_ID
 }
 
 const client = new Client()

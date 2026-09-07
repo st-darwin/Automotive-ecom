@@ -22,6 +22,7 @@ import Receipt from "./sections/User/Reciept";
 import Payments from "./sections/User/Payments";
 import ManualEntering from "./sections/Admin/ManualEntering";
 import Analytics from "./sections/Admin/Analytics";
+import Notification from "./sections/Admin/Notification";
 
 
 
@@ -46,6 +47,7 @@ const router = createBrowserRouter(
     <Route path="customers" element={<CustomerPage/>} />
     <Route path="analytics" element={<Analytics/>} />
     <Route  path="manual-enteries" element={<ManualEntering/>}/>
+    <Route  path="notifications" element={<Notification/>}/>
   
     
 

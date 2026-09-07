@@ -109,158 +109,179 @@ export default function Cart() {
 
     const initializePaystackPayment = usePaystackPayment(paystackConfig);
 
-    const handlePaymentSuccess = async (_reference: any) => {
-        setIsProcessingPayment(true);
-        try {
-            const customerName = user?.name || 'Valued Customer';
-            const accountId = user?.$id;
-            const checkoutTimestamp = new Date().toISOString();
 
-            for (const item of filteredCartItems) {
-                const unitPrice = item.price || 0;
-                const quantity = item.quantity || 1;
-                const totalPrice = unitPrice * quantity;
-                const orderId = ID.unique();
+const handlePaymentSuccess = async (_reference: any) => {
+    setIsProcessingPayment(true);
+    try {
+        const customerName = user?.name || 'Valued Customer';
+        const accountId = user?.$id;
+        const checkoutTimestamp = new Date().toISOString();
 
-                // 1. Create Order in the appropriate collection based on activeTab
-                if (activeTab === 'tyres') {
-                    await database.createDocument(
-                        appwriteConfig.databaseId,
-                        appwriteConfig.tyreOrdersCollecton || 'tyre-order',
-                        orderId,
-                        {
-                            customerName,
-                            tyreName: item.name,
-                            brand: item.brand || 'Generic',
-                            size: item.sizeOrVolume || 'Standard',
-                            unitPrice,
-                            quantity,
-                            totalPrice,
-                            paymentStatus: 'paid',
-                            accountId
-                        }
-                    );
+        for (const item of filteredCartItems) {
+            const unitPrice = item.price || 0;
+            const quantity = item.quantity || 1;
+            const totalPrice = unitPrice * quantity;
+            const orderId = ID.unique();
 
-                    // Reduce stock in inventory (tyreCollection)
-                    try {
-                        const productDoc = await database.getDocument(
-                            appwriteConfig.databaseId,
-                            appwriteConfig.tyreColection || 'tyres',
-                            item.productId
-                        );
-                        const currentStock = productDoc.stock ?? productDoc.quantity ?? 0;
-                        const newStock = Math.max(0, currentStock - quantity);
-                        await database.updateDocument(
-                            appwriteConfig.databaseId,
-                            appwriteConfig.tyreColection || 'tyres',
-                            item.productId,
-                            { stock: newStock }
-                        );
-                    } catch (err) {
-                        console.error('Error updating tyre stock:', err);
+            // 1. Create Order in the appropriate collection based on activeTab
+            if (activeTab === 'tyres') {
+                await database.createDocument(
+                    appwriteConfig.databaseId,
+                    appwriteConfig.tyreOrdersCollecton || 'tyre-order',
+                    orderId,
+                    {
+                        customerName,
+                        tyreName: item.name,
+                        brand: item.brand || 'Generic',
+                        size: item.sizeOrVolume || 'Standard',
+                        unitPrice,
+                        quantity,
+                        totalPrice,
+                        paymentStatus: 'paid',
+                        accountId
                     }
+                );
 
-                } else if (activeTab === 'grease') {
-                    await database.createDocument(
+                // Reduce stock in inventory (tyreCollection)
+                try {
+                    const productDoc = await database.getDocument(
                         appwriteConfig.databaseId,
-                        appwriteConfig.greaseOrdersCollection || 'grease-order',
-                        orderId,
-                        {
-                            customerName,
-                            greaseName: item.name,
-                            brand: item.brand || 'Generic',
-                            volume: item.sizeOrVolume || 'Standard',
-                            unitPrice,
-                            quantity,
-                            totalPrice,
-                            paymentStatus: 'paid',
-                            accountId
-                        }
+                        appwriteConfig.tyreColection || 'tyres',
+                        item.productId
                     );
-
-                    // Reduce stock in inventory (greaseCollection)
-                    try {
-                        const productDoc = await database.getDocument(
-                            appwriteConfig.databaseId,
-                            appwriteConfig.greaseCollection || 'grease',
-                            item.productId
-                        );
-                        const currentStock = productDoc.stock ?? productDoc.quantity ?? 0;
-                        const newStock = Math.max(0, currentStock - quantity);
-                        await database.updateDocument(
-                            appwriteConfig.databaseId,
-                            appwriteConfig.greaseCollection || 'grease',
-                            item.productId,
-                            { stock: newStock }
-                        );
-                    } catch (err) {
-                        console.error('Error updating grease stock:', err);
-                    }
-
-                } else if (activeTab === 'motorParts') {
-                    await database.createDocument(
+                    const currentStock = productDoc.stock ?? productDoc.quantity ?? 0;
+                    const newStock = Math.max(0, currentStock - quantity);
+                    await database.updateDocument(
                         appwriteConfig.databaseId,
-                        appwriteConfig.motorPartsOrdersCollection || 'motorParts-order',
-                        orderId,
-                        {
-                            customerName,
-                            partName: item.name,
-                            brand: item.brand || 'Generic',
-                            category: item.category || 'General',
-                            unitPrice,
-                            quantity,
-                            totalPrice,
-                            paymentStatus: 'paid',
-                            accountId
-                        }
+                        appwriteConfig.tyreColection || 'tyres',
+                        item.productId,
+                        { stock: newStock }
                     );
-
-                    // Reduce stock in inventory (motorPartsCollection)
-                    try {
-                        const productDoc = await database.getDocument(
-                            appwriteConfig.databaseId,
-                            appwriteConfig.motorPartsCollection || 'motorParts',
-                            item.productId
-                        );
-                        const currentStock = productDoc.stock ?? productDoc.quantity ?? 0;
-                        const newStock = Math.max(0, currentStock - quantity);
-                        await database.updateDocument(
-                            appwriteConfig.databaseId,
-                            appwriteConfig.motorPartsCollection || 'motorParts',
-                            item.productId,
-                            { stock: newStock }
-                        );
-                    } catch (err) {
-                        console.error('Error updating motor parts stock:', err);
-                    }
+                } catch (err) {
+                    console.error('Error updating tyre stock:', err);
                 }
 
-                // 2. Remove checked out item from cart
-                await database.deleteDocument(
+            } else if (activeTab === 'grease') {
+                await database.createDocument(
                     appwriteConfig.databaseId,
-                    appwriteConfig.cartCollection || 'cart',
-                    item.$id
+                    appwriteConfig.greaseOrdersCollection || 'grease-order',
+                    orderId,
+                    {
+                        customerName,
+                        greaseName: item.name,
+                        brand: item.brand || 'Generic',
+                        volume: item.sizeOrVolume || 'Standard',
+                        unitPrice,
+                        quantity,
+                        totalPrice,
+                        paymentStatus: 'paid',
+                        accountId
+                    }
                 );
+
+                // Reduce stock in inventory (greaseCollection)
+                try {
+                    const productDoc = await database.getDocument(
+                        appwriteConfig.databaseId,
+                        appwriteConfig.greaseCollection || 'grease',
+                        item.productId
+                    );
+                    const currentStock = productDoc.stock ?? productDoc.quantity ?? 0;
+                    const newStock = Math.max(0, currentStock - quantity);
+                    await database.updateDocument(
+                        appwriteConfig.databaseId,
+                        appwriteConfig.greaseCollection || 'grease',
+                        item.productId,
+                        { stock: newStock }
+                    );
+                } catch (err) {
+                    console.error('Error updating grease stock:', err);
+                }
+
+            } else if (activeTab === 'motorParts') {
+                await database.createDocument(
+                    appwriteConfig.databaseId,
+                    appwriteConfig.motorPartsOrdersCollection || 'motorParts-order',
+                    orderId,
+                    {
+                        customerName,
+                        partName: item.name,
+                        brand: item.brand || 'Generic',
+                        category: item.category || 'General',
+                        unitPrice,
+                        quantity,
+                        totalPrice,
+                        paymentStatus: 'paid',
+                        accountId
+                    }
+                );
+
+                // Reduce stock in inventory (motorPartsCollection)
+                try {
+                    const productDoc = await database.getDocument(
+                        appwriteConfig.databaseId,
+                        appwriteConfig.motorPartsCollection || 'motorParts',
+                        item.productId
+                    );
+                    const currentStock = productDoc.stock ?? productDoc.quantity ?? 0;
+                    const newStock = Math.max(0, currentStock - quantity);
+                    await database.updateDocument(
+                        appwriteConfig.databaseId,
+                        appwriteConfig.motorPartsCollection || 'motorParts',
+                        item.productId,
+                        { stock: newStock }
+                    );
+                } catch (err) {
+                    console.error('Error updating motor parts stock:', err);
+                }
             }
 
-            // Refresh cart state
-            setCartItems(prev => prev.filter(item => item.productType !== activeTab));
-            
-            // Navigate to Receipt Page passing state cleanly
-            navigate('/Customer/receipt', { 
-                state: { 
-                    createdAt: checkoutTimestamp, 
-                    type: activeTab ,
-                    accountId: accountId
-                } 
-            });
-        } catch (error) {
-            console.error('Error processing post-payment actions:', error);
-            alert('Payment was successful, but there was an error saving your order. Please contact support.');
-            setIsProcessingPayment(false);
-        }
-    };
+            // 2. Create Admin Notification Document
+            try {
+                await database.createDocument(
+                    appwriteConfig.databaseId,
+                    appwriteConfig.adminNotificationsCollection || 'admin-notifications',
+                    ID.unique(),
+                    {
+                        customerName,
+                        productName: item.name,
+                        productType: activeTab,
+                        quantity,
+                        totalPrice,
+                        orderId,
+                        paymentStatus : "paid",
+                        isRead: 'false' // or false depending on whether your attribute is boolean/string
+                    }
+                );
+            } catch (notifErr) {
+                console.error('Error creating admin notification:', notifErr);
+            }
 
+            // 3. Remove checked out item from cart
+            await database.deleteDocument(
+                appwriteConfig.databaseId,
+                appwriteConfig.cartCollection || 'cart',
+                item.$id
+            );
+        }
+
+        // Refresh cart state
+        setCartItems(prev => prev.filter(item => item.productType !== activeTab));
+        
+        // Navigate to Receipt Page passing state cleanly
+        navigate('/Customer/receipt', { 
+            state: { 
+                createdAt: checkoutTimestamp, 
+                type: activeTab,
+                accountId: accountId
+            } 
+        });
+    } catch (error) {
+        console.error('Error processing post-payment actions:', error);
+        alert('Payment was successful, but there was an error saving your order. Please contact support.');
+        setIsProcessingPayment(false);
+    }
+};
     const handleCheckout = () => {
         if (subtotal <= 0) return;
         initializePaystackPayment({
