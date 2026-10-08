@@ -22,7 +22,7 @@ export default function UserLayout() {
     const handleLogout = async () => {
         try {
             await logoutUser();
-            navigate('/login');
+            navigate('/sign-in');
         } catch (error) {
             console.error("Failed to log out:", error);
         }

@@ -13,7 +13,8 @@ import {
     Search, 
     Check,
     ChevronLeft,
-    ChevronRight
+    ChevronRight,
+    FileText
 } from 'lucide-react';
 import { appwriteConfig, database } from '../../appwrite/Client';
 
@@ -115,6 +116,17 @@ const MotorPartsOrder = () => {
         } finally {
             setUpdatingId(null);
         }
+    };
+
+    const handleViewReceipt = (order: MotorPartOrder, e: React.MouseEvent) => {
+        e.stopPropagation();
+        navigate('/receipt', { 
+            state: { 
+                type: 'motorParts',
+                createdAt: order.$createdAt,
+                order 
+            } 
+        });
     };
 
     const metrics = useMemo(() => {
@@ -408,18 +420,35 @@ const MotorPartsOrder = () => {
                                                         </div>
                                                     </td>
                                                     <td className="py-4 px-6 text-right relative" onClick={e => e.stopPropagation()}>
-                                                        <button
-                                                            onClick={(e) => {
-                                                                e.stopPropagation();
-                                                                setActiveDropdown(activeDropdown === order.$id ? null : order.$id);
-                                                            }}
-                                                            className="p-2 rounded-xl text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-all cursor-pointer"
-                                                        >
-                                                            <MoreVertical className="w-4 h-4" />
-                                                        </button>
+                                                        <div className="flex items-center justify-end gap-1.5">
+                                                            <button
+                                                                onClick={(e) => handleViewReceipt(order, e)}
+                                                                title="View Receipt"
+                                                                className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-xl text-xs font-medium text-slate-700 bg-slate-100 hover:bg-slate-200 transition-all cursor-pointer"
+                                                            >
+                                                                <FileText className="w-3.5 h-3.5 text-slate-500" />
+                                                                <span>Receipt</span>
+                                                            </button>
+                                                            <button
+                                                                onClick={(e) => {
+                                                                    e.stopPropagation();
+                                                                    setActiveDropdown(activeDropdown === order.$id ? null : order.$id);
+                                                                }}
+                                                                className="p-2 rounded-xl text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-all cursor-pointer"
+                                                            >
+                                                                <MoreVertical className="w-4 h-4" />
+                                                            </button>
+                                                        </div>
 
                                                         {activeDropdown === order.$id && (
                                                             <div className="absolute right-6 top-14 w-44 bg-white rounded-2xl shadow-xl border border-slate-100 py-1.5 z-20 text-left">
+                                                                <button
+                                                                    onClick={(e) => handleViewReceipt(order, e)}
+                                                                    className="w-full flex items-center gap-2.5 px-4 py-2 text-xs font-medium text-slate-700 hover:bg-slate-50 transition-colors cursor-pointer"
+                                                                >
+                                                                    <FileText className="w-3.5 h-3.5 text-slate-500" />
+                                                                    <span>View Receipt</span>
+                                                                </button>
                                                                 <button
                                                                     onClick={(e) => handleStatusToggle(order, e)}
                                                                     className="w-full flex items-center gap-2.5 px-4 py-2 text-xs font-medium text-slate-700 hover:bg-slate-50 transition-colors cursor-pointer"

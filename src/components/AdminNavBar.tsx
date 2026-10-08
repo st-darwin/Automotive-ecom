@@ -1,9 +1,11 @@
 import { useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import { adminSidebarItems } from '../Utils/Constant';
-import { Menu, X, PlusCircle , LogOut, Car, LayoutDashboard, Package, ShoppingCart, Users, BarChart3, Settings } from 'lucide-react';
+
+import { Menu, X, PlusCircle, LogOut, Car, LayoutDashboard, Package, ShoppingCart, Users, BarChart3, Settings, Bell } from 'lucide-react';
 import { logoutUser } from '../appwrite/Auth';
 import logo from '../assets/icons/logo.png';
+
 
 const getIcon = (iconName: string) => {
   switch (iconName) {
@@ -13,13 +15,15 @@ const getIcon = (iconName: string) => {
       return <Package className="w-4 h-4" />;
     case 'shopping-cart':
       return <ShoppingCart className="w-4 h-4" />;
+    case 'bell':
+      return <Bell className="w-4 h-4" />;
     case 'users':
       return <Users className="w-4 h-4" />;
     case 'chart':
       return <BarChart3 className="w-4 h-4" />;
     case 'settings':
       return <Settings className="w-4 h-4" />;
-    case 'plus-circle': // Add this case for your manual entries item
+    case 'plus-circle':
       return <PlusCircle className="w-4 h-4" />;
     default:
       return <Car className="w-4 h-4" />;

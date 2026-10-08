@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { ShoppingCart, ClipboardList, LogOut, Menu, X, Package } from 'lucide-react';
 import logo from '../assets/icons/logo.png';
 import { useNavigate } from 'react-router-dom';
+import {logoutUser} from '../appwrite/Auth'
 
 
 interface UserNavbarProps {
@@ -137,7 +138,9 @@ export default function UserNavbar({
                         <div className="h-px bg-slate-100 my-1 mx-2" />
 
                         <button
-                            onClick={() => { setIsOpen(false); onLogout?.(); }}
+                            onClick={() => { setIsOpen(false);
+                                
+                                onLogout?.(); }}
                             className="flex items-center gap-3.5 px-4.5 py-3.5 rounded-2xl bg-rose-50/70 hover:bg-rose-100/80 text-rose-600 text-xs font-semibold transition-all cursor-pointer group border border-rose-100/60"
                         >
                             <div className="w-9 h-9 rounded-xl bg-white shadow-xs flex items-center justify-center text-rose-500 group-hover:bg-rose-500 group-hover:text-white transition-colors">

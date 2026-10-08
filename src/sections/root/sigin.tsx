@@ -1,5 +1,6 @@
 import { account } from '../../appwrite/Client';
 import { loginWithGoogle } from '../../appwrite/Auth';
+import logo from '../../assets/icons/logo.png'
 
 export const SignInLoader = async() =>{
 
@@ -31,21 +32,8 @@ export const SignInLoader = async() =>{
         
         {/* Brand / Header Section */}
         <div className="text-center space-y-3">
-          <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-tr from-blue-600 to-indigo-600 text-white shadow-lg shadow-blue-600/30 ring-4 ring-blue-50">
-            <svg 
-              xmlns="http://www.w3.org/2000/svg" 
-              fill="none" 
-              viewBox="0 0 24 24" 
-              strokeWidth={1.75} 
-              stroke="currentColor" 
-              className="w-8 h-8"
-            >
-              <path 
-                strokeLinecap="round" 
-                strokeLinejoin="round" 
-                d="M8.25 18.75a1.5 1.5 0 1 1-3 0m3 0a1.5 1.5 0 1 0-3 0m3 0h6m-9 0H3.375a1.125 1.125 0 0 1-1.125-1.125V14.25m17.25 4.5a1.5 1.5 0 1 1-3 0m3 0a1.5 1.5 0 1 0-3 0m3 0h1.125c.621 0 1.129-.504 1.09-1.124a17.902 17.902 0 0 0-3.213-9.193 2.056 2.056 0 0 0-1.58-.86H8.528c-.714 0-1.363.32-1.78.86-1.865 2.417-3.213 5.48-3.213 9.193-.039.62.469 1.124 1.09 1.124H4.5m15 0v-4.5m-15 4.5v-4.5m15 0V9.375c0-.621-.504-1.125-1.125-1.125H5.625c-.621 0-1.125.504-1.125 1.125v4.5m15 0H4.5" 
-              />
-            </svg>
+          <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl text-white shadow-lg shadow-blue-600/30 ring-4 ring-blue-50">
+            <img src={logo} alt="Kinchris Logo" className="h-15 w-15 rounded-xl" />
           </div>
           
           <div className="space-y-1">
@@ -95,7 +83,7 @@ export const SignInLoader = async() =>{
         {/* Footer Security Note */}
         <div className="pt-4 border-t border-slate-100 text-center">
           <p className="text-xs text-slate-400 font-medium">
-            Secure enterprise authentication powered by Appwrite & Google
+            Secure enterprise authentication powered by Google
           </p>
         </div>
 

@@ -29,14 +29,15 @@ export const adminSidebarItems = [
     route: "analytics",
     icon: "chart",
   },
-  {
-    label: "Settings",
-    route: "settings",
-    icon: "settings",
-  },
+
   {
     label: "Walk-in Sales", 
     route: "/manual-enteries",
     icon: "plus-circle"
+  },
+  {
+   label: "Parking Stores",
+   route: "/parking-stores",
+   icon: "map-pin"
   },
 ];
