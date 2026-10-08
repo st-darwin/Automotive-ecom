@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { ShoppingCart, ClipboardList, LogOut, Menu, X, Package } from 'lucide-react';
 import logo from '../assets/icons/logo.png';
 import { useNavigate } from 'react-router-dom';
-import {logoutUser} from '../appwrite/Auth'
+
 
 
 interface UserNavbarProps {

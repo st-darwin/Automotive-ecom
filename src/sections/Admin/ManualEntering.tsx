@@ -150,7 +150,7 @@ export default function ManualEntering() {
             
             // Refresh local product list state with updated stock value
             setProducts(prev => prev.map(p => p.$id === selectedProduct.$id ? { ...p, [stockFieldKey]: updatedStock } : p));
-            setSelectedProduct(prev => prev ? { ...prev, [stockFieldKey]: updatedStock } : null);
+            setSelectedProduct((prev : any) => prev ? { ...prev, [stockFieldKey]: updatedStock } : null);
             setCustomerName('');
             setQuantity(1);
             setCustomUnitPrice('');
