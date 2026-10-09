@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import Header from '../../components/Header';
 import { database, appwriteConfig } from '../../appwrite/Client';
-import { ShoppingCart, Heart, Package, Search, Filter, X } from 'lucide-react';
+import { ShoppingCart, Heart, Package, Search, Filter, X, Sparkles } from 'lucide-react';
 import { ID, Query } from 'appwrite';
 import { getCurrentUser } from '../../appwrite/Auth';
 import { useLoaderData } from 'react-router-dom';
@@ -210,16 +210,28 @@ export default function CustomerProducts() {
 
     const getStockBadge = (stock: number) => {
         if (stock <= 0) {
-            return <span className="text-[9px] font-bold px-2 py-0.5 rounded-full bg-rose-50 text-rose-600 border border-rose-200/40 uppercase tracking-wide">Out of Stock</span>;
+            return (
+                <span className="inline-flex items-center gap-1 text-[9px] font-bold px-2.5 py-1 rounded-full bg-rose-50 text-rose-600 border border-rose-200/60 uppercase tracking-wider shadow-2xs">
+                    Out of Stock
+                </span>
+            );
         } else if (stock <= 10) {
-            return <span className="text-[9px] font-bold px-2 py-0.5 rounded-full bg-amber-50 text-amber-600 border border-amber-200/40 uppercase tracking-wide">Low Stock</span>;
+            return (
+                <span className="inline-flex items-center gap-1 text-[9px] font-bold px-2.5 py-1 rounded-full bg-amber-50 text-amber-700 border border-amber-200/60 uppercase tracking-wider shadow-2xs">
+                    Low Stock
+                </span>
+            );
         } else {
-            return <span className="text-[9px] font-bold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-600 border border-emerald-200/40 uppercase tracking-wide">In Stock</span>;
+            return (
+                <span className="inline-flex items-center gap-1 text-[9px] font-bold px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200/60 uppercase tracking-wider shadow-2xs">
+                    In Stock
+                </span>
+            );
         }
     };
 
     return (
-        <div className="space-y-6 sm:space-y-8 max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 pb-20 pt-4">
+        <div className="space-y-6 sm:space-y-8 max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 pb-24 pt-4">
             <div className="flex flex-col gap-4">
                 <Header
                     title="Kinchris Switch Enterprise"
@@ -270,7 +282,7 @@ export default function CustomerProducts() {
             </div>
 
             {/* Search and Filters Bar */}
-            <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3.5 bg-white/80 backdrop-blur-xl p-3.5 sm:p-4 rounded-3xl border border-slate-200/60 shadow-2xs">
+            <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3.5 bg-white/80 backdrop-blur-xl p-3.5 sm:p-4 rounded-3xl border border-slate-200/60 shadow-xs">
                 <div className="relative w-full md:w-80">
                     <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
                     <input
@@ -278,7 +290,7 @@ export default function CustomerProducts() {
                         placeholder="Search name or brand..."
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
-                        className="w-full pl-10 pr-4 py-2.5 rounded-2xl bg-slate-50 border border-slate-200 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-slate-900/10"
+                        className="w-full pl-10 pr-4 py-2.5 rounded-2xl bg-slate-50/80 border border-slate-200/80 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-slate-900/10 transition-all"
                     />
                 </div>
 
@@ -291,10 +303,10 @@ export default function CustomerProducts() {
                                 <button
                                     key={idx}
                                     onClick={() => setSelectedCategory(cat as string)}
-                                    className={`px-3 py-1.5 rounded-xl text-[11px] font-semibold capitalize transition-colors cursor-pointer shrink-0 ${
+                                    className={`px-3 py-1.5 rounded-xl text-[11px] font-semibold capitalize transition-all cursor-pointer shrink-0 ${
                                         selectedCategory === cat
-                                            ? 'bg-slate-200 text-slate-900'
-                                            : 'bg-slate-50 text-slate-600 hover:bg-slate-100'
+                                            ? 'bg-slate-900 text-white shadow-xs'
+                                            : 'bg-slate-50 text-slate-600 hover:bg-slate-100 border border-slate-200/60'
                                     }`}
                                 >
                                     {cat}
@@ -305,10 +317,10 @@ export default function CustomerProducts() {
                 )}
             </div>
 
-            {/* Products Grid - Clean Square-ish 2 Columns on Mobile */}
+            {/* Modern Square-ish 2-Column Mobile Grid */}
             {loading ? (
                 <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3.5 sm:gap-6">
-                    {[1, 2, 3, 4].map(n => (
+                    {[1, 2, 3, 4, 5, 6].map(n => (
                         <div key={n} className="bg-white/60 border border-slate-200/60 rounded-3xl aspect-square animate-pulse" />
                     ))}
                 </div>
@@ -323,36 +335,36 @@ export default function CustomerProducts() {
                         <div
                             key={product.$id}
                             onClick={() => handleCardClick(product.$id)}
-                            className="bg-white/90 backdrop-blur-xl border border-slate-200/70 rounded-3xl p-3 sm:p-4 shadow-xs flex flex-col justify-between hover:border-slate-300 hover:shadow-md transition-all group relative cursor-pointer"
+                            className="bg-white/90 backdrop-blur-xl border border-slate-200/70 rounded-3xl p-3 sm:p-4 shadow-xs flex flex-col justify-between hover:border-slate-300 hover:shadow-lg transition-all duration-300 group relative cursor-pointer"
                         >
                             <button
                                 onClick={(e) => toggleFavorite(product.$id, e)}
-                                className="absolute top-3.5 right-3.5 sm:top-5 sm:right-5 z-10 w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-white/90 backdrop-blur-md shadow-sm flex items-center justify-center text-slate-600 hover:scale-110 transition-transform cursor-pointer"
+                                className="absolute top-3.5 right-3.5 sm:top-5 sm:right-5 z-10 w-8 h-8 rounded-full bg-white/90 backdrop-blur-md shadow-sm flex items-center justify-center text-slate-600 hover:scale-110 transition-transform cursor-pointer"
                                 aria-label="Save to favorites"
                             >
-                                <Heart className={`w-3.5 h-3.5 ${favorites[product.$id] ? 'fill-rose-500 text-rose-500' : 'text-slate-400'}`} />
+                                <Heart className={`w-3.5 h-3.5 sm:w-4 sm:h-4 ${favorites[product.$id] ? 'fill-rose-500 text-rose-500' : 'text-slate-400'}`} />
                             </button>
 
                             <div>
-                                <div className="w-full aspect-square rounded-2xl bg-slate-100 overflow-hidden mb-3 relative shadow-inner">
+                                <div className="w-full aspect-square rounded-2xl bg-slate-100/80 overflow-hidden mb-3 relative shadow-inner">
                                     {product.imageUrl ? (
                                         <img
                                             src={product.imageUrl}
                                             alt={product.name}
-                                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                                         />
                                     ) : (
                                         <div className="w-full h-full flex items-center justify-center text-slate-400">
                                             <Package className="w-8 h-8 sm:w-10 sm:h-10" />
                                         </div>
                                     )}
-                                    <div className="absolute bottom-2.5 left-2.5 bg-slate-900/80 backdrop-blur-md text-white text-[9px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">
+                                    <div className="absolute bottom-2.5 left-2.5 bg-slate-900/85 backdrop-blur-md text-white text-[9px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider shadow-sm">
                                         {product.brand}
                                     </div>
                                 </div>
 
                                 <div className="flex items-center justify-between text-[10px] font-semibold text-slate-400 uppercase tracking-wide mb-1">
-                                    <span className="truncate max-w-[50%]">{product.category || product.type}</span>
+                                    <span className="truncate max-w-[48%]">{product.category || product.type}</span>
                                     {getStockBadge(product.stock)}
                                 </div>
 
@@ -367,15 +379,15 @@ export default function CustomerProducts() {
                                 </div>
                             </div>
 
-                            <div className="pt-2.5 border-t border-slate-100 flex items-center justify-between gap-1.5">
+                            <div className="pt-3 border-t border-slate-100 flex items-center justify-between gap-1.5">
                                 <div>
-                                    <span className="text-[9px] text-slate-400 block uppercase font-semibold leading-none mb-1">Price</span>
-                                    <span className="text-xs sm:text-sm font-extrabold text-slate-900">₦{(product.price || 0).toLocaleString()}</span>
+                                    <span className="text-[9px] text-slate-400 block uppercase font-semibold tracking-wider leading-none mb-1">Price</span>
+                                    <span className="text-xs sm:text-sm font-black text-slate-900">₦{(product.price || 0).toLocaleString()}</span>
                                 </div>
                                 <button
                                     onClick={(e) => addToCart(product, e)}
                                     disabled={product.stock <= 0}
-                                    className={`flex items-center justify-center gap-1.5 px-3 sm:px-4 py-2 rounded-2xl font-semibold text-xs transition-colors shadow-xs cursor-pointer shrink-0 ${
+                                    className={`flex items-center justify-center gap-1.5 px-3.5 sm:px-4 py-2 rounded-2xl font-semibold text-xs transition-all shadow-xs cursor-pointer shrink-0 ${
                                         product.stock > 0
                                             ? 'bg-slate-900 hover:bg-slate-800 text-white active:scale-95'
                                             : 'bg-slate-100 text-slate-400 cursor-not-allowed'
@@ -392,7 +404,7 @@ export default function CustomerProducts() {
 
             {/* Product Details Modal */}
             {(selectedProduct || modalLoading) && (
-                <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
+                <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 animate-fade-in">
                     <div className="bg-white rounded-3xl max-w-lg w-full p-6 shadow-2xl relative space-y-6 max-h-[90vh] overflow-y-auto">
                         <button
                             type="button"
@@ -421,13 +433,14 @@ export default function CustomerProducts() {
                                             <Package className="w-12 h-12" />
                                         </div>
                                     )}
-                                    <span className="absolute bottom-3 left-3 bg-slate-900 text-white text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-wider">
+                                    <span className="absolute bottom-3 left-3 bg-slate-900 text-white text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-wider shadow-sm">
                                         {selectedProduct.brand}
                                     </span>
                                 </div>
 
                                 <div className="space-y-1">
-                                    <span className="text-[10px] uppercase font-bold text-emerald-600 tracking-wider">
+                                    <span className="text-[10px] uppercase font-bold text-emerald-600 tracking-wider flex items-center gap-1">
+                                        <Sparkles className="w-3 h-3" />
                                         {selectedProduct.category || selectedProduct.type}
                                     </span>
                                     <h2 className="text-lg font-extrabold text-slate-900">{selectedProduct.name}</h2>
@@ -440,7 +453,7 @@ export default function CustomerProducts() {
                                     </div>
                                     <div>
                                         <span className="text-slate-400 block font-medium mb-0.5">Price</span>
-                                        <strong className="text-slate-900 font-extrabold">₦{(selectedProduct.price || 0).toLocaleString()}</strong>
+                                        <strong className="text-slate-900 font-extrabold text-sm">₦{(selectedProduct.price || 0).toLocaleString()}</strong>
                                     </div>
                                     <div>
                                         <span className="text-slate-400 block font-medium mb-1">Availability</span>
