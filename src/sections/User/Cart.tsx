@@ -444,8 +444,10 @@ const handlePaymentSuccess = async (_reference: any) => {
                                 <span>₦{subtotal.toLocaleString()}</span>
                             </div>
                             <button
+                            
                                 onClick={handleCheckout}
-                                disabled={filteredCartItems.length === 0 || isProcessingPayment}
+                                disabled
+                                //  disabled={filteredCartItems.length === 0 || isProcessingPayment} 
                                 className={`w-full py-3 rounded-2xl font-semibold text-xs flex items-center justify-center gap-2 transition-colors cursor-pointer ${
                                     filteredCartItems.length > 0
                                         ? 'bg-gradient-to-r from-zinc-900 via-neutral-900 to-slate-900 hover:from-black hover:to-slate-800 text-white shadow-md active:scale-95'
@@ -453,7 +455,8 @@ const handlePaymentSuccess = async (_reference: any) => {
                                 }`}
                             >
                                 <CreditCard className="w-4 h-4" />
-                                <span>Pay with Paystack (₦{subtotal.toLocaleString()})</span>
+                                {/*  <span>Pay with Paystack (₦{subtotal.toLocaleString()})</span> */}
+                                <span>Payment Disabled</span>
                             </button>
                         </div>
 

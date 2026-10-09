@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import { adminSidebarItems } from '../Utils/Constant';
 
-import { Menu, X, PlusCircle, LogOut, Car, LayoutDashboard, Package, ShoppingCart, Users, BarChart3, Settings, Bell } from 'lucide-react';
+import { Menu, X, PlusCircle, LogOut, Warehouse,Car, LayoutDashboard, Package, ShoppingCart, Users, BarChart3, Settings, Bell } from 'lucide-react';
 import { logoutUser } from '../appwrite/Auth';
 import logo from '../assets/icons/logo.png';
 
@@ -23,6 +23,8 @@ const getIcon = (iconName: string) => {
       return <BarChart3 className="w-4 h-4" />;
     case 'settings':
       return <Settings className="w-4 h-4" />;
+      case 'warehouse':
+        return <Warehouse className='w-4 h-4' />;
     case 'plus-circle':
       return <PlusCircle className="w-4 h-4" />;
     default:

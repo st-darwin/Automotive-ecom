@@ -1,3 +1,5 @@
+
+
 export const adminSidebarItems = [
   {
     label: "Dashboard",
@@ -38,6 +40,6 @@ export const adminSidebarItems = [
   {
    label: "Parking Stores",
    route: "/parking-stores",
-   icon: "map-pin"
+   icon: "warehouse"
   },
 ];

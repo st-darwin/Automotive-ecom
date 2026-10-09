@@ -208,11 +208,21 @@ export default function CustomerProducts() {
 
     const categories = ['all', ...Array.from(new Set(products.map(p => p.category).filter(Boolean)))];
 
+    const getStockBadge = (stock: number) => {
+        if (stock <= 0) {
+            return <span className="text-[9px] font-bold px-2 py-0.5 rounded-full bg-rose-50 text-rose-600 border border-rose-200/40 uppercase tracking-wide">Out of Stock</span>;
+        } else if (stock <= 10) {
+            return <span className="text-[9px] font-bold px-2 py-0.5 rounded-full bg-amber-50 text-amber-600 border border-amber-200/40 uppercase tracking-wide">Low Stock</span>;
+        } else {
+            return <span className="text-[9px] font-bold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-600 border border-emerald-200/40 uppercase tracking-wide">In Stock</span>;
+        }
+    };
+
     return (
         <div className="space-y-6 sm:space-y-8 max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 pb-20 pt-4">
             <div className="flex flex-col gap-4">
                 <Header
-                    title="Kinchris Switch Enterprise ⚡"
+                    title="Kinchris Switch Enterprise"
                     description="Browse our curated catalog of elite automotive tyres, industrial-grade lubricants, and precision-engineered motor parts."
                     ctaText={`View Cart (${cart.length})`}
                     ctaUrl="cart"
@@ -295,11 +305,11 @@ export default function CustomerProducts() {
                 )}
             </div>
 
-            {/* Products Grid */}
+            {/* Products Grid - Clean Square-ish 2 Columns on Mobile */}
             {loading ? (
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
+                <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3.5 sm:gap-6">
                     {[1, 2, 3, 4].map(n => (
-                        <div key={n} className="bg-white/60 border border-slate-200/60 rounded-3xl h-72 animate-pulse" />
+                        <div key={n} className="bg-white/60 border border-slate-200/60 rounded-3xl aspect-square animate-pulse" />
                     ))}
                 </div>
             ) : filteredProducts.length === 0 ? (
@@ -308,23 +318,23 @@ export default function CustomerProducts() {
                     <p className="font-semibold text-slate-700">No products found in this collection.</p>
                 </div>
             ) : (
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
+                <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3.5 sm:gap-6">
                     {filteredProducts.map(product => (
                         <div
                             key={product.$id}
                             onClick={() => handleCardClick(product.$id)}
-                            className="bg-white/90 backdrop-blur-xl border border-slate-200/70 rounded-3xl p-4 shadow-sm flex flex-col justify-between hover:border-slate-300 hover:shadow-md transition-all group relative cursor-pointer"
+                            className="bg-white/90 backdrop-blur-xl border border-slate-200/70 rounded-3xl p-3 sm:p-4 shadow-xs flex flex-col justify-between hover:border-slate-300 hover:shadow-md transition-all group relative cursor-pointer"
                         >
                             <button
                                 onClick={(e) => toggleFavorite(product.$id, e)}
-                                className="absolute top-6 right-6 z-10 w-9 h-9 rounded-full bg-white/90 backdrop-blur-md shadow-sm flex items-center justify-center text-slate-600 hover:scale-110 transition-transform cursor-pointer"
+                                className="absolute top-3.5 right-3.5 sm:top-5 sm:right-5 z-10 w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-white/90 backdrop-blur-md shadow-sm flex items-center justify-center text-slate-600 hover:scale-110 transition-transform cursor-pointer"
                                 aria-label="Save to favorites"
                             >
-                                <Heart className={`w-4 h-4 ${favorites[product.$id] ? 'fill-rose-500 text-rose-500' : 'text-slate-400'}`} />
+                                <Heart className={`w-3.5 h-3.5 ${favorites[product.$id] ? 'fill-rose-500 text-rose-500' : 'text-slate-400'}`} />
                             </button>
 
                             <div>
-                                <div className="w-full h-44 sm:h-48 rounded-2xl bg-slate-100 overflow-hidden mb-3 sm:mb-4 relative">
+                                <div className="w-full aspect-square rounded-2xl bg-slate-100 overflow-hidden mb-3 relative shadow-inner">
                                     {product.imageUrl ? (
                                         <img
                                             src={product.imageUrl}
@@ -333,46 +343,46 @@ export default function CustomerProducts() {
                                         />
                                     ) : (
                                         <div className="w-full h-full flex items-center justify-center text-slate-400">
-                                            <Package className="w-10 h-10" />
+                                            <Package className="w-8 h-8 sm:w-10 sm:h-10" />
                                         </div>
                                     )}
-                                    <div className="absolute bottom-3 left-3 bg-slate-900/80 backdrop-blur-md text-white text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider">
+                                    <div className="absolute bottom-2.5 left-2.5 bg-slate-900/80 backdrop-blur-md text-white text-[9px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">
                                         {product.brand}
                                     </div>
                                 </div>
 
-                                <div className="flex items-center justify-between text-[11px] font-semibold text-slate-400 uppercase tracking-wide mb-1">
-                                    <span className="truncate max-w-[60%]">{product.category || product.type}</span>
-                                    <span>Stock: <strong className={product.stock > 0 ? 'text-emerald-600' : 'text-rose-600'}>{product.stock}</strong></span>
+                                <div className="flex items-center justify-between text-[10px] font-semibold text-slate-400 uppercase tracking-wide mb-1">
+                                    <span className="truncate max-w-[50%]">{product.category || product.type}</span>
+                                    {getStockBadge(product.stock)}
                                 </div>
 
                                 <h3 className="text-xs sm:text-sm font-bold text-slate-900 truncate mb-1" title={product.name}>
                                     {product.name}
                                 </h3>
 
-                                <div className="text-[11px] sm:text-xs text-slate-500 mb-3 sm:mb-4 flex flex-wrap gap-x-2">
+                                <div className="text-[10px] text-slate-500 mb-3 flex flex-wrap gap-x-2">
                                     {product.size && <span>Size: {product.size}</span>}
-                                    {product.volume && <span>Volume: {product.volume}</span>}
-                                    {product.year && <span>Year: {product.year}</span>}
+                                    {product.volume && <span>Vol: {product.volume}</span>}
+                                    {product.year && <span>Yr: {product.year}</span>}
                                 </div>
                             </div>
 
-                            <div className="pt-3 border-t border-slate-100 flex items-center justify-between gap-2">
+                            <div className="pt-2.5 border-t border-slate-100 flex items-center justify-between gap-1.5">
                                 <div>
-                                    <span className="text-[10px] text-slate-400 block uppercase font-semibold">Price</span>
-                                    <span className="text-xs sm:text-sm font-bold text-slate-900">₦{(product.price || 0).toLocaleString()}</span>
+                                    <span className="text-[9px] text-slate-400 block uppercase font-semibold leading-none mb-1">Price</span>
+                                    <span className="text-xs sm:text-sm font-extrabold text-slate-900">₦{(product.price || 0).toLocaleString()}</span>
                                 </div>
                                 <button
                                     onClick={(e) => addToCart(product, e)}
                                     disabled={product.stock <= 0}
-                                    className={`flex items-center gap-1.5 px-3.5 sm:px-4 py-2.5 rounded-2xl font-semibold text-xs transition-colors shadow-xs cursor-pointer shrink-0 ${
+                                    className={`flex items-center justify-center gap-1.5 px-3 sm:px-4 py-2 rounded-2xl font-semibold text-xs transition-colors shadow-xs cursor-pointer shrink-0 ${
                                         product.stock > 0
                                             ? 'bg-slate-900 hover:bg-slate-800 text-white active:scale-95'
                                             : 'bg-slate-100 text-slate-400 cursor-not-allowed'
                                     }`}
                                 >
                                     <ShoppingCart className="w-3.5 h-3.5" />
-                                    <span>Add</span>
+                                    <span className="hidden sm:inline">Add</span>
                                 </button>
                             </div>
                         </div>
@@ -381,99 +391,96 @@ export default function CustomerProducts() {
             )}
 
             {/* Product Details Modal */}
-          {/* Product Details Modal */}
-{(selectedProduct || modalLoading) && (
-    <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
-        <div className="bg-white rounded-3xl max-w-lg w-full p-6 shadow-2xl relative space-y-6 max-h-[90vh] overflow-y-auto">
-            <button
-                type="button"
-                onClick={() => {
-                    setSelectedProduct(null);
-                    setModalLoading(false);
-                }}
-                className="absolute top-4 right-4 w-9 h-9 rounded-full bg-slate-100 flex items-center justify-center text-slate-500 hover:bg-slate-200 transition-colors cursor-pointer z-10"
-                aria-label="Close modal"
-            >
-                <X className="w-4 h-4" />
-            </button>
+            {(selectedProduct || modalLoading) && (
+                <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
+                    <div className="bg-white rounded-3xl max-w-lg w-full p-6 shadow-2xl relative space-y-6 max-h-[90vh] overflow-y-auto">
+                        <button
+                            type="button"
+                            onClick={() => {
+                                setSelectedProduct(null);
+                                setModalLoading(false);
+                            }}
+                            className="absolute top-4 right-4 w-9 h-9 rounded-full bg-slate-100 flex items-center justify-center text-slate-500 hover:bg-slate-200 transition-colors cursor-pointer z-10"
+                            aria-label="Close modal"
+                        >
+                            <X className="w-4 h-4" />
+                        </button>
 
-            {modalLoading ? (
-                <div className="py-16 text-center space-y-3 animate-pulse">
-                    <Package className="w-8 h-8 text-slate-300 mx-auto" />
-                    <p className="text-xs font-bold text-slate-500">Loading full specifications...</p>
-                </div>
-            ) : selectedProduct && (
-                <>
-                    <div className="w-full h-56 rounded-2xl bg-slate-100 overflow-hidden relative">
-                        {selectedProduct.imageUrl ? (
-                            <img src={selectedProduct.imageUrl} alt={selectedProduct.name} className="w-full h-full object-cover" />
-                        ) : (
-                            <div className="w-full h-full flex items-center justify-center text-slate-300">
-                                <Package className="w-12 h-12" />
+                        {modalLoading ? (
+                            <div className="py-16 text-center space-y-3 animate-pulse">
+                                <Package className="w-8 h-8 text-slate-300 mx-auto" />
+                                <p className="text-xs font-bold text-slate-500">Loading full specifications...</p>
                             </div>
+                        ) : selectedProduct && (
+                            <>
+                                <div className="w-full h-56 rounded-2xl bg-slate-100 overflow-hidden relative shadow-inner">
+                                    {selectedProduct.imageUrl ? (
+                                        <img src={selectedProduct.imageUrl} alt={selectedProduct.name} className="w-full h-full object-cover" />
+                                    ) : (
+                                        <div className="w-full h-full flex items-center justify-center text-slate-300">
+                                            <Package className="w-12 h-12" />
+                                        </div>
+                                    )}
+                                    <span className="absolute bottom-3 left-3 bg-slate-900 text-white text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-wider">
+                                        {selectedProduct.brand}
+                                    </span>
+                                </div>
+
+                                <div className="space-y-1">
+                                    <span className="text-[10px] uppercase font-bold text-emerald-600 tracking-wider">
+                                        {selectedProduct.category || selectedProduct.type}
+                                    </span>
+                                    <h2 className="text-lg font-extrabold text-slate-900">{selectedProduct.name}</h2>
+                                </div>
+
+                                <div className="grid grid-cols-2 gap-3.5 bg-slate-50/80 p-4 rounded-2xl border border-slate-100 text-xs">
+                                    <div>
+                                        <span className="text-slate-400 block font-medium mb-0.5">Brand</span>
+                                        <strong className="text-slate-800">{selectedProduct.brand || 'N/A'}</strong>
+                                    </div>
+                                    <div>
+                                        <span className="text-slate-400 block font-medium mb-0.5">Price</span>
+                                        <strong className="text-slate-900 font-extrabold">₦{(selectedProduct.price || 0).toLocaleString()}</strong>
+                                    </div>
+                                    <div>
+                                        <span className="text-slate-400 block font-medium mb-1">Availability</span>
+                                        <div>{getStockBadge(selectedProduct.stock)}</div>
+                                    </div>
+                                    <div>
+                                        <span className="text-slate-400 block font-medium mb-0.5">Size / Volume</span>
+                                        <strong className="text-slate-800">{selectedProduct.size || selectedProduct.volume || 'N/A'}</strong>
+                                    </div>
+                                    <div>
+                                        <span className="text-slate-400 block font-medium mb-0.5">Year</span>
+                                        <strong className="text-slate-800">{selectedProduct.year || 'N/A'}</strong>
+                                    </div>
+                                    <div>
+                                        <span className="text-slate-400 block font-medium mb-0.5">Tread Pattern</span>
+                                        <strong className="text-slate-800">{selectedProduct.treadPattern || 'Standard'}</strong>
+                                    </div>
+                                </div>
+
+                                <button
+                                    onClick={(e) => {
+                                        addToCart(selectedProduct, e);
+                                        setSelectedProduct(null);
+                                        setModalLoading(false);
+                                    }}
+                                    disabled={selectedProduct.stock <= 0}
+                                    className={`w-full py-3.5 rounded-2xl font-bold text-xs flex items-center justify-center gap-2 cursor-pointer shadow-md transition-all ${
+                                        selectedProduct.stock > 0
+                                            ? 'bg-slate-900 text-white hover:bg-slate-800 active:scale-98'
+                                            : 'bg-slate-100 text-slate-400 cursor-not-allowed'
+                                    }`}
+                                >
+                                    <ShoppingCart className="w-4 h-4" />
+                                    <span>Add to Cart - ₦{(selectedProduct.price || 0).toLocaleString()}</span>
+                                </button>
+                            </>
                         )}
-                        <span className="absolute bottom-3 left-3 bg-slate-900 text-white text-[10px] font-bold px-3 py-1 rounded-full uppercase">
-                            {selectedProduct.brand}
-                        </span>
                     </div>
-
-                    <div className="space-y-1">
-                        <span className="text-[10px] uppercase font-bold text-emerald-600 tracking-wider">
-                            {selectedProduct.category || selectedProduct.type}
-                        </span>
-                        <h2 className="text-lg font-extrabold text-slate-900">{selectedProduct.name}</h2>
-                    </div>
-
-                    <div className="grid grid-cols-2 gap-3 bg-slate-50 p-4 rounded-2xl border border-slate-100 text-xs">
-                        <div>
-                            <span className="text-slate-400 block font-medium">Brand</span>
-                            <strong className="text-slate-800">{selectedProduct.brand || 'N/A'}</strong>
-                        </div>
-                        <div>
-                            <span className="text-slate-400 block font-medium">Price</span>
-                            <strong className="text-slate-900">₦{(selectedProduct.price || 0).toLocaleString()}</strong>
-                        </div>
-                        <div>
-                            <span className="text-slate-400 block font-medium">Stock Available</span>
-                            <strong className={selectedProduct.stock > 0 ? 'text-emerald-600' : 'text-rose-600'}>
-                                {selectedProduct.stock} units
-                            </strong>
-                        </div>
-                        <div>
-                            <span className="text-slate-400 block font-medium">Size / Volume</span>
-                            <strong className="text-slate-800">{selectedProduct.size || selectedProduct.volume || 'N/A'}</strong>
-                        </div>
-                        <div>
-                            <span className="text-slate-400 block font-medium">Year</span>
-                            <strong className="text-slate-800">{selectedProduct.year || 'N/A'}</strong>
-                        </div>
-                        <div>
-                            <span className="text-slate-400 block font-medium">Tread Pattern</span>
-                            <strong className="text-slate-800">{selectedProduct.treadPattern || 'Standard'}</strong>
-                        </div>
-                    </div>
-
-                    <button
-                        onClick={(e) => {
-                            addToCart(selectedProduct, e);
-                            setSelectedProduct(null);
-                            setModalLoading(false);
-                        }}
-                        disabled={selectedProduct.stock <= 0}
-                        className={`w-full py-3 rounded-2xl font-bold text-xs flex items-center justify-center gap-2 cursor-pointer shadow-md ${
-                            selectedProduct.stock > 0
-                                ? 'bg-slate-900 text-white hover:bg-slate-800'
-                                : 'bg-slate-100 text-slate-400 cursor-not-allowed'
-                        }`}
-                    >
-                        <ShoppingCart className="w-4 h-4" />
-                        <span>Add to Cart - ₦{(selectedProduct.price || 0).toLocaleString()}</span>
-                    </button>
-                </>
+                </div>
             )}
-        </div>
-    </div>
-)}
         </div>
     );
 }
