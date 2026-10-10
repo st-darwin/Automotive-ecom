@@ -46,7 +46,6 @@ const TyreOrderComponent = () => {
     const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
     const [activeTab, setActiveTab] = useState<TabType>('all');
     const [searchQuery, setSearchQuery] = useState('');
-    const [updatingId, setUpdatingId] = useState<string | null>(null);
 
     // Modal state for recording subsequent payments
     const [paymentModalOrder, setPaymentModalOrder] = useState<TyreOrder | null>(null);
@@ -170,7 +169,6 @@ const TyreOrderComponent = () => {
         const currentDate = new Date().toISOString();
         
         try {
-            setUpdatingId(order.$id);
             await database.updateDocument(
                 appwriteConfig.databaseId,
                 appwriteConfig.tyreOrdersCollecton,
@@ -192,8 +190,6 @@ const TyreOrderComponent = () => {
             setActiveDropdown(null);
         } catch (error) {
             console.error('Error updating payment status:', error);
-        } finally {
-            setUpdatingId(null);
         }
     };
 
