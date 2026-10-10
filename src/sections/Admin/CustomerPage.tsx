@@ -24,7 +24,19 @@ const CustomerPage = () => {
                 appwriteConfig.databaseId,
                 appwriteConfig.userCollectionId
             );
-            setCustomers(response.documents as unknown as Customer[]);
+            
+            const rawCustomers = response.documents as unknown as Customer[];
+            
+            // Remove duplicate records by email or accountId
+            const uniqueMap = new Map<string, Customer>();
+            rawCustomers.forEach(cust => {
+                const key = cust.email ? cust.email.trim().toLowerCase() : (cust.accountId || cust.$id);
+                if (!uniqueMap.has(key)) {
+                    uniqueMap.set(key, cust);
+                }
+            });
+
+            setCustomers(Array.from(uniqueMap.values()));
         } catch (error) {
             console.error('Error fetching customers:', error);
         } finally {
@@ -56,7 +68,7 @@ const CustomerPage = () => {
     const totalCustomersCount = customers.length;
 
     return (
-        <div className="space-y-8 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-16" onClick={() => setActiveDropdown(null)}>
+        <div className="space-y-6 sm:space-y-8 max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 pb-16" onClick={() => setActiveDropdown(null)}>
             {/* Header Section */}
             <Header
                 title="Customer Management"
@@ -64,14 +76,14 @@ const CustomerPage = () => {
             />
 
             {/* Metrics Card */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                <div className="bg-white/80 backdrop-blur-xl border border-slate-200/60 rounded-3xl p-6 shadow-2xs flex items-center gap-4">
-                    <div className="w-14 h-14 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center flex-shrink-0">
-                        <Users className="w-7 h-7" />
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+                <div className="bg-white/85 backdrop-blur-xl border border-slate-200/60 rounded-3xl p-5 sm:p-6 shadow-2xs flex items-center gap-4">
+                    <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center flex-shrink-0">
+                        <Users className="w-6 h-6 sm:w-7 sm:h-7" />
                     </div>
                     <div>
-                        <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider block mb-1">Total Admin & Customers</span>
-                        <h3 className="text-2xl font-bold text-slate-900">{loading ? '...' : totalCustomersCount}</h3>
+                        <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider block mb-1">Total Unique Customers</span>
+                        <h3 className="text-xl sm:text-2xl font-bold text-slate-900">{loading ? '...' : totalCustomersCount}</h3>
                     </div>
                 </div>
             </div>
@@ -82,7 +94,7 @@ const CustomerPage = () => {
                     <div className="w-6 h-6 border-2 border-slate-300 border-t-slate-800 rounded-full animate-spin" />
                 </div>
             ) : customers.length === 0 ? (
-                <div className="bg-white/60 backdrop-blur-xl border border-slate-200/60 rounded-3xl p-16 text-center space-y-4 shadow-2xs">
+                <div className="bg-white/60 backdrop-blur-xl border border-slate-200/60 rounded-3xl p-12 sm:p-16 text-center space-y-4 shadow-2xs">
                     <div className="w-14 h-14 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center mx-auto">
                         <Users className="w-7 h-7" />
                     </div>
@@ -94,35 +106,35 @@ const CustomerPage = () => {
                     </div>
                 </div>
             ) : (
-                <div className="bg-white/80 backdrop-blur-xl border border-slate-200/60 rounded-3xl shadow-2xs overflow-hidden">
+                <div className="bg-white/85 backdrop-blur-xl border border-slate-200/60 rounded-3xl shadow-2xs overflow-hidden">
                     <div className="overflow-x-auto">
-                        <table className="w-full text-left border-collapse">
+                        <table className="w-full text-left border-collapse min-w-[700px]">
                             <thead>
                                 <tr className="border-b border-slate-100 bg-slate-50/50 text-[11px] font-semibold text-slate-400 uppercase tracking-wider">
-                                    <th className="py-4 px-6">Name</th>
-                                    <th className="py-4 px-6">Email</th>
-                                    <th className="py-4 px-6">Account ID</th>
-                                    <th className="py-4 px-6">Role</th>
-                                    <th className="py-4 px-6">Joined Date</th>
-                                    <th className="py-4 px-6 text-right">Actions</th>
+                                    <th className="py-4 px-4 sm:px-6">Name</th>
+                                    <th className="py-4 px-4 sm:px-6">Email</th>
+                                    <th className="py-4 px-4 sm:px-6">Account ID</th>
+                                    <th className="py-4 px-4 sm:px-6">Role</th>
+                                    <th className="py-4 px-4 sm:px-6">Joined Date</th>
+                                    <th className="py-4 px-4 sm:px-6 text-right">Actions</th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-slate-100 text-xs font-medium text-slate-600">
                                 {customers.map((customer) => (
                                     <tr key={customer.$id} className="hover:bg-slate-50/60 transition-colors">
-                                        <td className="py-4 px-6 font-semibold text-slate-900">
+                                        <td className="py-4 px-4 sm:px-6 font-semibold text-slate-900">
                                             {customer.name || 'N/A'}
                                         </td>
-                                        <td className="py-4 px-6">
+                                        <td className="py-4 px-4 sm:px-6">
                                             <div className="flex items-center gap-2 text-slate-600">
-                                                <Mail className="w-3.5 h-3.5 text-slate-400" />
-                                                <span>{customer.email || 'N/A'}</span>
+                                                <Mail className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                                                <span className="truncate max-w-[180px] sm:max-w-none">{customer.email || 'N/A'}</span>
                                             </div>
                                         </td>
-                                        <td className="py-4 px-6 font-mono text-[11px] text-slate-500">
+                                        <td className="py-4 px-4 sm:px-6 font-mono text-[11px] text-slate-500">
                                             {customer.accountId || 'N/A'}
                                         </td>
-                                        <td className="py-4 px-6">
+                                        <td className="py-4 px-4 sm:px-6">
                                             <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-semibold ${
                                                 customer.role?.toLowerCase() === 'admin' 
                                                     ? 'bg-purple-50 text-purple-600' 
@@ -132,10 +144,10 @@ const CustomerPage = () => {
                                                 {customer.role || 'customer'}
                                             </span>
                                         </td>
-                                        <td className="py-4 px-6 text-slate-500">
+                                        <td className="py-4 px-4 sm:px-6 text-slate-500 whitespace-nowrap">
                                             {customer.$createdAt ? new Date(customer.$createdAt).toLocaleDateString() : 'N/A'}
                                         </td>
-                                        <td className="py-4 px-6 text-right relative" onClick={e => e.stopPropagation()}>
+                                        <td className="py-4 px-4 sm:px-6 text-right relative" onClick={e => e.stopPropagation()}>
                                             <button
                                                 onClick={(e) => {
                                                     e.stopPropagation();
@@ -150,7 +162,7 @@ const CustomerPage = () => {
                                                 <div className="absolute right-6 top-14 w-36 bg-white rounded-2xl shadow-xl border border-slate-100 py-1.5 z-20 text-left">
                                                     <button
                                                         onClick={(e) => handleDelete(customer.$id, e)}
-                                                        className="w-full flex items-center gap-2.5 px-4 py-2 text-xs font-medium text-rose-600 hover:bg-rose-50 transition-colors"
+                                                        className="w-full flex items-center gap-2.5 px-4 py-2 text-xs font-medium text-rose-600 hover:bg-rose-50 transition-colors cursor-pointer"
                                                     >
                                                         <Trash2 className="w-3.5 h-3.5 text-rose-500" />
                                                         <span>Delete User</span>

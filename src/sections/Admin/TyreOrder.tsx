@@ -15,9 +15,7 @@ import {
     ChevronLeft,
     ChevronRight,
     FileText,
-    DollarSign,
     Users,
-    CreditCard,
     X,
     PlusCircle
 } from 'lucide-react';
@@ -344,11 +342,11 @@ const TyreOrderComponent = () => {
     }, [filteredOrders]);
 
     return (
-        <div className="space-y-8 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-16" onClick={() => setActiveDropdown(null)}>
-            <div className="flex items-center gap-4">
+        <div className="space-y-6 sm:space-y-8 max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 pb-16" onClick={() => setActiveDropdown(null)}>
+            <div className="flex items-center gap-3 sm:gap-4">
                 <button
                     onClick={() => navigate('/orders')}
-                    className="p-2.5 rounded-xl bg-white/80 border border-slate-200/80 text-slate-600 hover:bg-slate-100 transition-all cursor-pointer shadow-2xs"
+                    className="p-2 sm:p-2.5 rounded-xl bg-white/85 border border-slate-200/80 text-slate-600 hover:bg-slate-100 transition-all cursor-pointer shadow-2xs shrink-0"
                 >
                     <ArrowLeft className="w-4 h-4" />
                 </button>
@@ -371,8 +369,8 @@ const TyreOrderComponent = () => {
                     </button>
                 </div>
 
-                <div ref={sliderRef} className="flex sm:grid sm:grid-cols-2 lg:grid-cols-4 gap-5 overflow-x-auto sm:overflow-x-visible snap-x snap-mandatory scrollbar-none pb-2 pt-1 px-1">
-                    <div className="min-w-[260px] sm:min-w-0 snap-start bg-white/80 backdrop-blur-xl border border-slate-200/60 rounded-3xl p-5 shadow-2xs flex items-center gap-4 flex-shrink-0">
+                <div ref={sliderRef} className="flex sm:grid sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5 overflow-x-auto sm:overflow-x-visible snap-x snap-mandatory scrollbar-none pb-2 pt-1 px-1">
+                    <div className="min-w-[260px] sm:min-w-0 snap-start bg-white/85 backdrop-blur-xl border border-slate-200/60 rounded-3xl p-5 shadow-2xs flex items-center gap-4 flex-shrink-0">
                         <div className="w-12 h-12 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center flex-shrink-0">
                             <ShoppingBag className="w-6 h-6" />
                         </div>
@@ -383,7 +381,7 @@ const TyreOrderComponent = () => {
                         </div>
                     </div>
 
-                    <div className="min-w-[260px] sm:min-w-0 snap-start bg-white/80 backdrop-blur-xl border border-slate-200/60 rounded-3xl p-5 shadow-2xs flex items-center gap-4 flex-shrink-0">
+                    <div className="min-w-[260px] sm:min-w-0 snap-start bg-white/85 backdrop-blur-xl border border-slate-200/60 rounded-3xl p-5 shadow-2xs flex items-center gap-4 flex-shrink-0">
                         <div className="w-12 h-12 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center flex-shrink-0">
                             <Clock className="w-6 h-6" />
                         </div>
@@ -394,7 +392,7 @@ const TyreOrderComponent = () => {
                         </div>
                     </div>
 
-                    <div className="min-w-[260px] sm:min-w-0 snap-start bg-white/80 backdrop-blur-xl border border-slate-200/60 rounded-3xl p-5 shadow-2xs flex items-center gap-4 flex-shrink-0">
+                    <div className="min-w-[260px] sm:min-w-0 snap-start bg-white/85 backdrop-blur-xl border border-slate-200/60 rounded-3xl p-5 shadow-2xs flex items-center gap-4 flex-shrink-0">
                         <div className="w-12 h-12 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center flex-shrink-0">
                             <Wallet className="w-6 h-6" />
                         </div>
@@ -405,7 +403,7 @@ const TyreOrderComponent = () => {
                         </div>
                     </div>
 
-                    <div className="min-w-[260px] sm:min-w-0 snap-start bg-white/80 backdrop-blur-xl border border-slate-200/60 rounded-3xl p-5 shadow-2xs flex items-center gap-4 flex-shrink-0">
+                    <div className="min-w-[260px] sm:min-w-0 snap-start bg-white/85 backdrop-blur-xl border border-slate-200/60 rounded-3xl p-5 shadow-2xs flex items-center gap-4 flex-shrink-0">
                         <div className="w-12 h-12 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center flex-shrink-0">
                             <Users className="w-6 h-6" />
                         </div>
@@ -419,13 +417,13 @@ const TyreOrderComponent = () => {
             </div>
 
             {/* Controls: Tabs & Search */}
-            <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4 bg-white/60 backdrop-blur-xl p-3 border border-slate-200/60 rounded-2xl shadow-2xs">
-                <div className="flex items-center gap-1 bg-slate-100/80 p-1 rounded-xl overflow-x-auto">
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 bg-white/60 backdrop-blur-xl p-3 border border-slate-200/60 rounded-2xl shadow-2xs">
+                <div className="flex items-center gap-1 bg-slate-100/80 p-1 rounded-xl overflow-x-auto scrollbar-none">
                     {(['all', 'paid', 'pending', 'debts'] as TabType[]).map((tab) => (
                         <button
                             key={tab}
                             onClick={() => setActiveTab(tab)}
-                            className={`flex-1 sm:flex-none px-4 py-2 rounded-lg text-xs font-semibold capitalize transition-all cursor-pointer whitespace-nowrap ${
+                            className={`flex-1 sm:flex-none px-3.5 sm:px-4 py-2 rounded-lg text-xs font-semibold capitalize transition-all cursor-pointer whitespace-nowrap ${
                                 activeTab === tab
                                     ? 'bg-white text-slate-900 shadow-xs'
                                     : 'text-slate-500 hover:text-slate-800'
@@ -458,7 +456,7 @@ const TyreOrderComponent = () => {
             ) : activeTab === 'debts' ? (
                 /* Customer Debts Grouped View */
                 customerDebtList.length === 0 ? (
-                    <div className="bg-white/60 backdrop-blur-xl border border-slate-200/60 rounded-3xl p-16 text-center space-y-4 shadow-2xs">
+                    <div className="bg-white/60 backdrop-blur-xl border border-slate-200/60 rounded-3xl p-12 sm:p-16 text-center space-y-4 shadow-2xs">
                         <div className="w-14 h-14 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center mx-auto">
                             <Check className="w-7 h-7" />
                         </div>
@@ -469,14 +467,16 @@ const TyreOrderComponent = () => {
                     </div>
                 ) : (
                     <div className="space-y-6">
-                        <div className="bg-white/80 backdrop-blur-xl border border-slate-200/60 rounded-3xl shadow-2xs overflow-hidden">
-                            <div className="bg-slate-50/80 px-6 py-4 border-b border-slate-100 flex items-center justify-between">
+                        <div className="bg-white/85 backdrop-blur-xl border border-slate-200/60 rounded-3xl shadow-2xs overflow-hidden">
+                            <div className="bg-slate-50/90 px-4 sm:px-6 py-4 border-b border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                                 <h3 className="text-xs font-bold text-slate-800 tracking-wider uppercase">Customers with Outstanding Balances</h3>
-                                <span className="text-xs font-bold text-amber-600 bg-amber-50 px-3 py-1 rounded-full border border-amber-200/60">
+                                <span className="text-xs font-bold text-amber-600 bg-amber-50 px-3 py-1 rounded-full border border-amber-200/60 self-start sm:self-auto">
                                     Total Debt: ₦{metrics.totalOutstandingDebt.toLocaleString()}
                                 </span>
                             </div>
-                            <div className="overflow-x-auto">
+                            
+                            {/* Desktop Table */}
+                            <div className="hidden sm:block overflow-x-auto">
                                 <table className="w-full text-left border-collapse min-w-[700px]">
                                     <thead>
                                         <tr className="border-b border-slate-100 text-[11px] font-semibold text-slate-400 uppercase tracking-wider">
@@ -511,11 +511,35 @@ const TyreOrderComponent = () => {
                                     </tbody>
                                 </table>
                             </div>
+
+                            {/* Mobile Stacked List Cards View */}
+                            <div className="divide-y divide-slate-100 sm:hidden">
+                                {customerDebtList.map((debtor) => (
+                                    <div key={debtor.customerName} className="p-4 space-y-3">
+                                        <div className="flex items-start justify-between gap-2">
+                                            <div>
+                                                <h4 className="font-bold text-slate-900 text-sm">{debtor.customerName}</h4>
+                                                <p className="text-[11px] text-slate-500">{debtor.orders.length} unpaid transaction{debtor.orders.length > 1 ? 's' : ''}</p>
+                                            </div>
+                                            <span className="text-xs font-black text-rose-600 bg-rose-50 px-2.5 py-1 rounded-lg">
+                                                ₦{debtor.totalOwed.toLocaleString()}
+                                            </span>
+                                        </div>
+                                        <button
+                                            onClick={() => setDebtModalCustomer(debtor.customerName)}
+                                            className="w-full py-2 bg-slate-900 hover:bg-slate-800 text-white rounded-xl text-xs font-bold transition-all cursor-pointer shadow-xs flex items-center justify-center gap-1.5"
+                                        >
+                                            <FileText className="w-3.5 h-3.5" />
+                                            <span>View Transactions & Pay</span>
+                                        </button>
+                                    </div>
+                                ))}
+                            </div>
                         </div>
                     </div>
                 )
             ) : filteredOrders.length === 0 ? (
-                <div className="bg-white/60 backdrop-blur-xl border border-slate-200/60 rounded-3xl p-16 text-center space-y-4 shadow-2xs">
+                <div className="bg-white/60 backdrop-blur-xl border border-slate-200/60 rounded-3xl p-12 sm:p-16 text-center space-y-4 shadow-2xs">
                     <div className="w-14 h-14 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center mx-auto">
                         <CircleDot className="w-7 h-7" />
                     </div>
@@ -529,8 +553,8 @@ const TyreOrderComponent = () => {
             ) : (
                 <div className="space-y-6">
                     {Object.entries(groupedOrdersByCategory).map(([categoryLabel, dateOrders]) => (
-                        <div key={categoryLabel} className="bg-white/80 backdrop-blur-xl border border-slate-200/60 rounded-3xl shadow-2xs overflow-hidden">
-                            <div className="bg-slate-50/80 px-6 py-3 border-b border-slate-100 flex items-center justify-between">
+                        <div key={categoryLabel} className="bg-white/85 backdrop-blur-xl border border-slate-200/60 rounded-3xl shadow-2xs overflow-hidden">
+                            <div className="bg-slate-50/80 px-4 sm:px-6 py-3 border-b border-slate-100 flex items-center justify-between">
                                 <div className="flex items-center gap-2">
                                     <Calendar className="w-4 h-4 text-blue-600" />
                                     <span className="text-xs font-bold text-slate-800 tracking-wide uppercase">{categoryLabel}</span>
@@ -540,6 +564,7 @@ const TyreOrderComponent = () => {
                                 </span>
                             </div>
 
+                            {/* Responsive Table Container */}
                             <div className="overflow-x-auto">
                                 <table className="w-full text-left border-collapse min-w-[850px]">
                                     <thead>
@@ -667,8 +692,8 @@ const TyreOrderComponent = () => {
 
             {/* Subsequent Payment Modal */}
             {paymentModalOrder && (
-                <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
-                    <div className="bg-white rounded-3xl max-w-md w-full p-6 sm:p-8 shadow-2xl space-y-6 animate-in fade-in zoom-in-95 duration-200">
+                <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-end sm:items-center justify-center p-0 sm:p-4">
+                    <div className="bg-white rounded-t-3xl sm:rounded-3xl max-w-md w-full p-6 sm:p-8 shadow-2xl space-y-6 max-h-[90vh] overflow-y-auto animate-in fade-in zoom-in-95 duration-200">
                         <div className="flex items-center justify-between">
                             <div>
                                 <h3 className="text-base font-black text-slate-900">Record Subsequent Payment</h3>
@@ -715,8 +740,8 @@ const TyreOrderComponent = () => {
 
             {/* Individual Customer Debt Profile Modal */}
             {debtModalCustomer && (
-                <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
-                    <div className="bg-white rounded-3xl max-w-2xl w-full p-6 sm:p-8 shadow-2xl space-y-6 max-h-[90vh] overflow-y-auto animate-in fade-in zoom-in-95 duration-200">
+                <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-end sm:items-center justify-center p-0 sm:p-4">
+                    <div className="bg-white rounded-t-3xl sm:rounded-3xl max-w-2xl w-full p-6 sm:p-8 shadow-2xl space-y-6 max-h-[90vh] overflow-y-auto animate-in fade-in zoom-in-95 duration-200">
                         <div className="flex items-center justify-between">
                             <div>
                                 <h3 className="text-lg font-black text-slate-900">Customer Debt Breakdown</h3>
@@ -737,8 +762,8 @@ const TyreOrderComponent = () => {
                                             <p className="text-xs font-bold text-slate-900">{order.tyreName} — <span className="text-slate-500 font-normal">{order.brand} ({order.size})</span></p>
                                             <p className="text-[10px] text-slate-400">Date: {new Date(order.$createdAt).toLocaleDateString()}</p>
                                         </div>
-                                        <div className="flex items-center gap-4">
-                                            <div className="text-right">
+                                        <div className="flex items-center justify-between sm:justify-end gap-4 pt-2 sm:pt-0 border-t sm:border-t-0 border-slate-200">
+                                            <div className="text-left sm:text-right">
                                                 <p className="text-xs font-bold text-slate-900">Total: ₦{order.totalPrice.toLocaleString()}</p>
                                                 <p className="text-xs font-black text-rose-600">Owed: ₦{owed.toLocaleString()}</p>
                                             </div>
@@ -747,7 +772,7 @@ const TyreOrderComponent = () => {
                                                     setDebtModalCustomer(null);
                                                     setPaymentModalOrder(order);
                                                 }}
-                                                className="px-3 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold cursor-pointer shadow-xs"
+                                                className="px-3.5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold cursor-pointer shadow-xs shrink-0"
                                             >
                                                 Pay
                                             </button>
