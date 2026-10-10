@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import Header from '../../components/Header';
 import { database, appwriteConfig } from '../../appwrite/Client';
-import { ShoppingCart, Heart, Package, Search, Filter, X, Sparkles, Settings2 } from 'lucide-react';
+import { ShoppingCart, Heart, Package, Search, Filter, X,  Settings2 } from 'lucide-react';
 import { ID, Query } from 'appwrite';
 import { getCurrentUser } from '../../appwrite/Auth';
 import { useLoaderData } from 'react-router-dom';

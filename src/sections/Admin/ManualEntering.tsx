@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { database, appwriteConfig } from '../../appwrite/Client';
 import { ID } from 'appwrite';
-import { Package, Wrench, Disc, CheckCircle2, AlertCircle, ShoppingCart, ArrowRight, Layers, Sparkles, ChevronDown, ArrowLeft } from 'lucide-react';
+import { Package, Wrench, Disc, CheckCircle2, AlertCircle, ShoppingCart, ArrowRight, Layers,  ChevronDown } from 'lucide-react';
 import Header from '../../components/Header';
 
 export default function ManualEntering() {
