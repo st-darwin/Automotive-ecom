@@ -626,7 +626,7 @@ const TyreOrderComponent = () => {
                                                                     className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-xl text-xs font-bold text-emerald-700 bg-emerald-50 hover:bg-emerald-100 transition-all cursor-pointer border border-emerald-200/60"
                                                                 >
                                                                     <PlusCircle className="w-3.5 h-3.5 text-emerald-600" />
-                                                                    <span>Pay Balance</span>
+                                                                    <span>Pay</span>
                                                                 </button>
                                                             )}
                                                             <button

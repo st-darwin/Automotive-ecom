@@ -23,6 +23,8 @@ interface OrderDocument {
     volume?: string;
     category?: string;
     accountId?: string;
+    amountPaid?: number;
+    amountOwed?: number;
 }
 
 export default function Receipt() {
@@ -111,17 +113,33 @@ export default function Receipt() {
     };
 
     const grandTotal = orders.reduce((sum, item) => sum + (item.totalPrice || 0), 0);
+    const totalPaid = orders.reduce((sum, item) => {
+        const isPaid = item.paymentStatus?.toLowerCase() === 'paid';
+        return sum + (item.amountPaid !== undefined ? item.amountPaid : (isPaid ? item.totalPrice : 0));
+    }, 0);
+    const totalOwed = orders.reduce((sum, item) => {
+        const isPaid = item.paymentStatus?.toLowerCase() === 'paid';
+        const paid = item.amountPaid !== undefined ? item.amountPaid : (isPaid ? item.totalPrice : 0);
+        return sum + (item.amountOwed !== undefined ? item.amountOwed : Math.max(0, item.totalPrice - paid));
+    }, 0);
 
     const handleDownloadPDF = async () => {
         if (!receiptRef.current) return;
         try {
             setDownloading(true);
+            
+            // Lock element width for consistent high-res rendering on mobile & desktop
+            const originalWidth = receiptRef.current.style.width;
+            receiptRef.current.style.width = '700px';
+
             const canvas = await html2canvas(receiptRef.current, {
                 scale: 3, 
                 useCORS: true,
                 logging: false,
                 backgroundColor: '#ffffff',
             });
+
+            receiptRef.current.style.width = originalWidth;
 
             const imgData = canvas.toDataURL('image/png');
             const pdf = new jsPDF('p', 'mm', 'a4');
@@ -169,7 +187,7 @@ export default function Receipt() {
                     <div 
                         ref={receiptRef} 
                         style={{ backgroundColor: '#ffffff', color: '#0f172a' }}
-                        className="border border-slate-200 rounded-3xl p-5 sm:p-10 shadow-sm space-y-6 sm:space-y-8 font-sans overflow-hidden"
+                        className="border border-slate-200 rounded-3xl p-6 sm:p-10 shadow-sm space-y-6 sm:space-y-8 font-sans overflow-hidden"
                     >
                         {/* Company & Receipt Header */}
                         <div className="flex flex-col sm:flex-row justify-between items-start gap-4 border-b border-slate-200 pb-5">
@@ -180,8 +198,12 @@ export default function Receipt() {
                                 <p className="text-[11px] sm:text-xs text-slate-500 mt-0.5">Official Sales & Distribution Invoice</p>
                             </div>
                             <div className="w-full sm:w-auto flex sm:flex-col justify-between items-center sm:items-end pt-2 sm:pt-0 border-t sm:border-t-0 border-slate-100">
-                                <span className="inline-block px-3 py-1 rounded-full text-[10px] sm:text-[11px] font-bold uppercase bg-emerald-50 text-emerald-700 border border-emerald-200">
-                                    {orders[0]?.paymentStatus || 'Paid'}
+                                <span className={`inline-block px-3 py-1 rounded-full text-[10px] sm:text-[11px] font-bold uppercase border ${
+                                    totalOwed > 0 
+                                        ? 'bg-amber-50 text-amber-700 border-amber-200' 
+                                        : 'bg-emerald-50 text-emerald-700 border-emerald-200'
+                                }`}>
+                                    {totalOwed > 0 ? 'Pending / Credit' : (orders[0]?.paymentStatus || 'Paid')}
                                 </span>
                                 <p className="text-[10px] sm:text-[11px] text-slate-400 mt-1 font-mono">
                                     Ref: {orders.length === 1 ? orders[0]?.$id : 'Bulk Checkout'}
@@ -239,15 +261,29 @@ export default function Receipt() {
                             </div>
                         </div>
 
-                        {/* Grand Total Section */}
-                        <div className="border-t border-slate-200 pt-4 sm:pt-5 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-                            <div>
-                                <p className="text-xs text-slate-500 font-medium">Thank you for your patronage!</p>
-                                <p className="text-[10px] text-slate-400 mt-0.5">Computer generated receipt, valid without signature.</p>
-                            </div>
-                            <div className="w-full sm:w-auto text-left sm:text-right pt-3 sm:pt-0 border-t sm:border-t-0 border-slate-100 flex sm:block justify-between items-center">
-                                <span className="text-xs text-slate-400 block font-medium uppercase">Grand Total</span>
-                                <span className="text-lg sm:text-xl font-black text-slate-900">₦{grandTotal.toLocaleString()}</span>
+                        {/* Financial Totals & Balance Breakdown */}
+                        <div className="border-t border-slate-200 pt-4 sm:pt-5 space-y-4">
+                            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                                <div>
+                                    <p className="text-xs text-slate-500 font-medium">Thank you for your patronage!</p>
+                                    <p className="text-[10px] text-slate-400 mt-0.5">Computer generated receipt, valid without signature.</p>
+                                </div>
+                                <div className="w-full sm:w-auto text-left sm:text-right space-y-1">
+                                    <div className="flex justify-between sm:justify-end gap-6 text-xs">
+                                        <span className="text-slate-500">Grand Total:</span>
+                                        <span className="font-bold text-slate-900">₦{grandTotal.toLocaleString()}</span>
+                                    </div>
+                                    <div className="flex justify-between sm:justify-end gap-6 text-xs">
+                                        <span className="text-slate-500">Amount Paid:</span>
+                                        <span className="font-bold text-emerald-600">₦{totalPaid.toLocaleString()}</span>
+                                    </div>
+                                    {totalOwed > 0 && (
+                                        <div className="flex justify-between sm:justify-end gap-6 text-xs pt-1 border-t border-slate-100">
+                                            <span className="font-bold text-slate-700">Amount Owed:</span>
+                                            <span className="font-black text-rose-600">₦{totalOwed.toLocaleString()}</span>
+                                        </div>
+                                    )}
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -257,14 +293,14 @@ export default function Receipt() {
                         <button
                             onClick={handleDownloadPDF}
                             disabled={downloading}
-                            className="w-full sm:flex-1 py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-2xl text-xs font-semibold flex items-center justify-center gap-2 transition-colors cursor-pointer disabled:opacity-50"
+                            className="w-full sm:flex-1 py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-2xl text-xs font-semibold flex items-center justify-center gap-2 transition-colors cursor-pointer disabled:opacity-50 shadow-xs"
                         >
                             <Download className="w-4 h-4" />
                             <span>{downloading ? 'Generating PDF...' : 'Download PDF'}</span>
                         </button>
                         <button
                             onClick={() => navigate('/')}
-                            className="w-full sm:flex-1 py-3 bg-slate-900 hover:bg-slate-800 text-white rounded-2xl text-xs font-semibold flex items-center justify-center gap-2 transition-colors cursor-pointer"
+                            className="w-full sm:flex-1 py-3 bg-slate-900 hover:bg-slate-800 text-white rounded-2xl text-xs font-semibold flex items-center justify-center gap-2 transition-colors cursor-pointer shadow-xs"
                         >
                             <ArrowLeft className="w-4 h-4" />
                             <span>Back to Dashboard</span>
