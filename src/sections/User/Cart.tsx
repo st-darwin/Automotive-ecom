@@ -317,6 +317,7 @@ const handlePaymentSuccess = async (_reference: any) => {
                     description="Manage your selected tyres, industrial lubricants, and motor components securely before checkout."
                     ctaText="Back to Catalog"
                     ctaUrl="/Customer"
+                    icon={ArrowRight}
                 />
             </div>
 

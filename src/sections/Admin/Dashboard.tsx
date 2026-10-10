@@ -2,7 +2,7 @@ import { useEffect, useState, useRef } from 'react';
 import { useLoaderData, useNavigate } from 'react-router-dom';
 import Header from '../../components/Header';
 import { getUser } from '../../appwrite/Auth';
-import { ShoppingBag, Bell, Users, DollarSign, Clock, ArrowUpRight, Calendar, ChevronLeft, ChevronRight, Layers, Download, Package } from 'lucide-react';
+import { ShoppingBag, Bell, Users, DollarSign, Clock, ArrowUpRight, Calendar, ChevronLeft, ChevronRight, Layers, Download, Package, ArrowRight } from 'lucide-react';
 import { appwriteConfig, database, client } from '../../appwrite/Client';
 
 export const Dashboardoader = async () => {
@@ -396,6 +396,7 @@ const Dashboard = () => {
                     description="Your automotive command center is primed. Monitor real-time store orders, track performance metrics, and keep Kinchris Switch running at peak velocity."
                     ctaText="View Products"
                     ctaUrl="/inventory"
+                    icon={ArrowRight}
                 />
                 
                 <div className="flex items-center gap-3 self-stretch sm:self-auto justify-between sm:justify-start">

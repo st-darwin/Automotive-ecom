@@ -1,14 +1,15 @@
 import { Link, useLocation } from 'react-router-dom'
-import { Plus, Car } from 'lucide-react'
+import { Plus, Car, type LucideIcon } from 'lucide-react'
 
 interface Props {
     title: string;
     description: string;
     ctaUrl?: string;
     ctaText?: string;
+    icon?: LucideIcon; // Added optional icon prop
 }
 
-const Header = ({ title, description, ctaText, ctaUrl }: Props) => {
+const Header = ({ title, description, ctaText, ctaUrl, icon: Icon = Plus }: Props) => {
     const location = useLocation()
     const isRoot = location.pathname === "/admin" || location.pathname === "/admin/"
 
@@ -47,7 +48,7 @@ const Header = ({ title, description, ctaText, ctaUrl }: Props) => {
                         <div className="absolute inset-0 bg-blue-50/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                         
                         <div className="relative flex h-7 w-7 items-center justify-center rounded-xl bg-blue-400 text-white shadow-sm shadow-blue-400/30 transition-transform duration-300 group-hover:scale-105">
-                            <Plus size={14} strokeWidth={2.5} />
+                            <Icon size={14} strokeWidth={2.5} />
                         </div>
                         <span className="relative text-sm font-semibold tracking-tight text-slate-800 group-hover:text-blue-600 transition-colors">
                             {ctaText}

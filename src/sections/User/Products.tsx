@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import Header from '../../components/Header';
 import { database, appwriteConfig } from '../../appwrite/Client';
-import { ShoppingCart, Heart, Package, Search, Filter, X, Sparkles } from 'lucide-react';
+import { ShoppingCart, Heart, Package, Search, Filter, X, Sparkles, Settings2 } from 'lucide-react';
 import { ID, Query } from 'appwrite';
 import { getCurrentUser } from '../../appwrite/Auth';
 import { useLoaderData } from 'react-router-dom';
@@ -238,6 +238,7 @@ export default function CustomerProducts() {
                     description="Browse our curated catalog of elite automotive tyres, industrial-grade lubricants, and precision-engineered motor parts."
                     ctaText={`View Cart (${cart.length})`}
                     ctaUrl="cart"
+                    icon={ShoppingCart}
                 />
             </div>
 
@@ -440,7 +441,7 @@ export default function CustomerProducts() {
 
                                 <div className="space-y-1">
                                     <span className="text-[10px] uppercase font-bold text-emerald-600 tracking-wider flex items-center gap-1">
-                                        <Sparkles className="w-3 h-3" />
+                                        <Settings2 className="w-3 h-3" />
                                         {selectedProduct.category || selectedProduct.type}
                                     </span>
                                     <h2 className="text-lg font-extrabold text-slate-900">{selectedProduct.name}</h2>

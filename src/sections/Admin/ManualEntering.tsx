@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { database, appwriteConfig } from '../../appwrite/Client';
 import { ID } from 'appwrite';
-import { Package, Wrench, Disc, CheckCircle2, AlertCircle, ShoppingCart, ArrowRight, Layers, Sparkles, ChevronDown } from 'lucide-react';
+import { Package, Wrench, Disc, CheckCircle2, AlertCircle, ShoppingCart, ArrowRight, Layers, Sparkles, ChevronDown, ArrowLeft } from 'lucide-react';
 import Header from '../../components/Header';
 
 export default function ManualEntering() {
@@ -185,6 +185,7 @@ export default function ManualEntering() {
                 description="Process counter sales and sync live store inventories effortlessly."
                 ctaText="View All Orders"
                 ctaUrl="/orders"
+                icon={ArrowRight}
             />
 
             <div className="max-w-3xl mx-auto px-3 sm:px-6 pt-4 sm:pt-10">
@@ -305,8 +306,8 @@ export default function ManualEntering() {
 
                         <div className="p-4 sm:p-5 bg-slate-50/80 rounded-xl sm:rounded-2xl border border-slate-200/70 space-y-3 shadow-inner">
                             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1.5">
-                                <div className="text-[11px] font-extrabold uppercase tracking-widest text-slate-400 flex items-center gap-1.5">
-                                    <Sparkles className="w-3.5 h-3.5 text-indigo-500 shrink-0" /> Auto-Filled Specifications
+                                <div className="text-[11px] font-semibold uppercase tracking-widest text-slate-400 flex items-center gap-1.5">
+                                  Auto-Filled Specifications
                                 </div>
                                 {selectedProduct && (
                                     <span className={`text-[10px] sm:text-[11px] font-bold px-2.5 py-0.5 rounded-full shadow-2xs ${currentStock > 0 ? 'bg-emerald-100 text-emerald-800 border border-emerald-200/50' : 'bg-rose-100 text-rose-800 border border-rose-200/50'}`}>

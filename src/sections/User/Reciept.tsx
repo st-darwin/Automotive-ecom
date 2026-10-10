@@ -29,7 +29,11 @@ export default function Receipt() {
     const [searchParams] = useSearchParams();
     const navigate = useNavigate();
     const location = useLocation();
+    
+    // Ref for the visible UI card
     const receiptRef = useRef<HTMLDivElement>(null);
+    // Ref for the hidden, fixed-width PDF capture container (guarantees styling consistency on mobile)
+    const printReceiptRef = useRef<HTMLDivElement>(null);
 
     const orderId = searchParams.get('orderId');
     const orderType = (searchParams.get('type') as 'tyres' | 'grease' | 'motorParts') || location.state?.type || 'tyres';
@@ -113,10 +117,12 @@ export default function Receipt() {
     const grandTotal = orders.reduce((sum, item) => sum + (item.totalPrice || 0), 0);
 
     const handleDownloadPDF = async () => {
-        if (!receiptRef.current) return;
+        const targetElement = printReceiptRef.current || receiptRef.current;
+        if (!targetElement) return;
+
         try {
             setDownloading(true);
-            const canvas = await html2canvas(receiptRef.current, {
+            const canvas = await html2canvas(targetElement, {
                 scale: 3, 
                 useCORS: true,
                 logging: false,
@@ -144,6 +150,7 @@ export default function Receipt() {
                 description="Verified order details and payment confirmation summary."
                 ctaText="Back to Catalog"
                 ctaUrl="/Customer"
+                icon={ArrowLeft}
             />
 
             {loading ? (
@@ -165,7 +172,7 @@ export default function Receipt() {
                 </div>
             ) : (
                 <div className="space-y-4">
-                    {/* Professional Printable Container */}
+                    {/* Visible UI Card */}
                     <div 
                         ref={receiptRef} 
                         style={{ backgroundColor: '#ffffff', color: '#0f172a' }}
@@ -205,7 +212,7 @@ export default function Receipt() {
                             </div>
                         </div>
 
-                        {/* Structured Items Table with horizontal scroll safety for small devices */}
+                        {/* Structured Items Table */}
                         <div className="space-y-3">
                             <h3 className="text-xs font-bold text-slate-900 uppercase tracking-wider">Item Breakdown</h3>
                             <div className="border border-slate-200 rounded-2xl overflow-x-auto">
@@ -248,6 +255,89 @@ export default function Receipt() {
                             <div className="w-full sm:w-auto text-left sm:text-right pt-3 sm:pt-0 border-t sm:border-t-0 border-slate-100 flex sm:block justify-between items-center">
                                 <span className="text-xs text-slate-400 block font-medium uppercase">Grand Total</span>
                                 <span className="text-lg sm:text-xl font-black text-slate-900">₦{grandTotal.toLocaleString()}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Hidden Off-Screen Container for Perfect Mobile & Desktop PDF Capture */}
+                    <div className="absolute -left-[9999px] top-0 pointer-events-none">
+                        <div 
+                            ref={printReceiptRef}
+                            style={{ width: '700px', backgroundColor: '#ffffff', color: '#0f172a' }}
+                            className="p-10 space-y-8 font-sans"
+                        >
+                            <div className="flex justify-between items-start border-b border-slate-200 pb-5">
+                                <div>
+                                    <h1 className="text-xl font-black tracking-tight text-slate-900 uppercase">
+                                        Kinchris Switch Enterprise
+                                    </h1>
+                                    <p className="text-xs text-slate-500 mt-0.5">Official Sales & Distribution Invoice</p>
+                                </div>
+                                <div className="text-right">
+                                    <span className="inline-block px-3 py-1 rounded-full text-xs font-bold uppercase bg-emerald-50 text-emerald-700 border border-emerald-200">
+                                        {orders[0]?.paymentStatus || 'Paid'}
+                                    </span>
+                                    <p className="text-xs text-slate-400 mt-1 font-mono">
+                                        Ref: {orders.length === 1 ? orders[0]?.$id : 'Bulk Checkout'}
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div className="grid grid-cols-2 gap-4 text-xs bg-slate-50 p-5 rounded-2xl border border-slate-200">
+                                <div>
+                                    <span className="text-slate-400 block font-medium uppercase tracking-wider text-[10px]">Billed To</span>
+                                    <span className="font-bold text-slate-900 text-sm mt-0.5 block">
+                                        {orders[0]?.customerName || 'Valued Customer'}
+                                    </span>
+                                </div>
+                                <div>
+                                    <span className="text-slate-400 block font-medium uppercase tracking-wider text-[10px]">Issued Date</span>
+                                    <span className="font-semibold text-slate-800 text-sm mt-0.5 block">
+                                        {orders[0]?.$createdAt ? new Date(orders[0].$createdAt).toLocaleString() : 'N/A'}
+                                    </span>
+                                </div>
+                            </div>
+
+                            <div className="space-y-3">
+                                <h3 className="text-xs font-bold text-slate-900 uppercase tracking-wider">Item Breakdown</h3>
+                                <table className="w-full text-left border-collapse border border-slate-200 rounded-xl overflow-hidden">
+                                    <thead>
+                                        <tr className="bg-slate-100 text-slate-600 text-[11px] uppercase tracking-wider border-b border-slate-200">
+                                            <th className="py-3 px-4 font-bold">Item Description</th>
+                                            <th className="py-3 px-4 font-bold text-center">Qty</th>
+                                            <th className="py-3 px-4 font-bold text-right">Amount</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody className="divide-y divide-slate-100 text-xs">
+                                        {orders.map((orderItem) => (
+                                            <tr key={orderItem.$id}>
+                                                <td className="py-4 px-4">
+                                                    <p className="font-bold text-slate-900">{getItemName(orderItem)}</p>
+                                                    <p className="text-[11px] text-slate-500 mt-0.5">
+                                                        Brand: {orderItem.brand || 'Generic'} {getItemSpec(orderItem) ? `• Spec: ${getItemSpec(orderItem)}` : ''}
+                                                    </p>
+                                                </td>
+                                                <td className="py-4 px-4 text-center font-medium text-slate-700">
+                                                    {orderItem.quantity}
+                                                </td>
+                                                <td className="py-4 px-4 text-right font-bold text-slate-900">
+                                                    ₦{(orderItem.totalPrice || 0).toLocaleString()}
+                                                </td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <div className="border-t border-slate-200 pt-5 flex justify-between items-center">
+                                <div>
+                                    <p className="text-xs text-slate-500 font-medium">Thank you for your patronage!</p>
+                                    <p className="text-[10px] text-slate-400 mt-0.5">Computer generated receipt, valid without signature.</p>
+                                </div>
+                                <div className="text-right">
+                                    <span className="text-xs text-slate-400 block font-medium uppercase">Grand Total</span>
+                                    <span className="text-xl font-black text-slate-900">₦{grandTotal.toLocaleString()}</span>
+                                </div>
                             </div>
                         </div>
                     </div>

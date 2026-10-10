@@ -159,7 +159,7 @@ const Analytics = () => {
         const customerDebtList = Object.values(customerDebtsMap).sort((a, b) => b.totalOwed - a.totalOwed);
 
         const recentTransactions = [...allOrders]
-            .sort((a, b) => new Date(b.$createdAt || '').getTime() - new Date(a.$createdAt || '').getTime())
+             .sort((a, b) => new Date(b.$createdAt || '').getTime() - new Date(a.$createdAt || '').getTime())
             .slice(0, 5);
 
         return {
@@ -186,7 +186,7 @@ const Analytics = () => {
                     description="Monitor financial performance, credit sales, debtor statistics, and collection health."
                 />
                 
-                <div className="grid grid-cols-3 sm:flex items-center p-1 bg-slate-100/80 backdrop-blur-md rounded-2xl border border-slate-200/60 w-full sm:w-auto">
+                <div className="grid grid-cols-3 sm:flex items-center p-1 bg-slate-100/85 backdrop-blur-md rounded-2xl border border-slate-200/60 w-full sm:w-auto">
                     <button onClick={() => setTimeFilter('all')} className={`px-3 sm:px-4 py-2 text-xs font-semibold rounded-xl transition-all text-center ${timeFilter === 'all' ? 'bg-white text-slate-900 shadow-xs' : 'text-slate-500 hover:text-slate-900'}`}>All Time</button>
                     <button onClick={() => setTimeFilter('month')} className={`px-3 sm:px-4 py-2 text-xs font-semibold rounded-xl transition-all text-center ${timeFilter === 'month' ? 'bg-white text-slate-900 shadow-xs' : 'text-slate-500 hover:text-slate-900'}`}>This Month</button>
                     <button onClick={() => setTimeFilter('week')} className={`px-3 sm:px-4 py-2 text-xs font-semibold rounded-xl transition-all text-center ${timeFilter === 'week' ? 'bg-white text-slate-900 shadow-xs' : 'text-slate-500 hover:text-slate-900'}`}>7 Days</button>
@@ -249,7 +249,49 @@ const Analytics = () => {
                 </div>
             </div>
 
-            {/* Customers with Active Debts Directory Table / Cards */}
+            {/* Financial Health Monitor */}
+            <div className="bg-gradient-to-br from-slate-900 to-slate-800 text-white rounded-3xl p-5 sm:p-7 shadow-xl flex flex-col justify-between space-y-6 relative overflow-hidden">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 z-10">
+                    <div className="flex items-center gap-3">
+                        <div className="p-3 bg-white/10 backdrop-blur-xl rounded-2xl text-blue-400 shrink-0">
+                            <Activity className="w-6 h-6" />
+                        </div>
+                        <div>
+                            <h4 className="font-bold text-base">Financial & Debt Liquidity Monitor</h4>
+                            <p className="text-xs text-slate-400">Payment conversion and store receivables tracking</p>
+                        </div>
+                    </div>
+                    <span className="px-3 py-1 bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-xs font-bold rounded-xl flex items-center gap-1.5 self-start sm:self-auto">
+                        <ShieldCheck className="w-4 h-4" /> Healthy
+                    </span>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 z-10 pt-2">
+                    <div className="bg-white/5 border border-white/10 rounded-2xl p-4 space-y-2">
+                        <span className="text-xs text-slate-400 font-medium">Payment Collection Efficiency</span>
+                        <div className="flex items-baseline justify-between">
+                            <span className="text-2xl font-bold">{loading ? '...' : `${analyticsData.collectionRate}%`}</span>
+                            <span className="text-[11px] text-emerald-400 font-semibold">Collected vs Total</span>
+                        </div>
+                        <div className="w-full bg-white/10 h-2 rounded-full overflow-hidden">
+                            <div className="bg-gradient-to-r from-blue-400 to-emerald-400 h-full rounded-full transition-all duration-1000" style={{ width: `${analyticsData.collectionRate}%` }}></div>
+                        </div>
+                    </div>
+
+                    <div className="bg-white/5 border border-white/10 rounded-2xl p-4 space-y-2">
+                        <span className="text-xs text-slate-400 font-medium">Total Credit Exposure</span>
+                        <div className="flex items-baseline justify-between">
+                            <span className="text-2xl font-bold text-amber-400">{loading ? '...' : `₦${analyticsData.totalOutstandingDebt.toLocaleString()}`}</span>
+                            <span className="text-[11px] text-amber-400 font-semibold">Unsettled Balances</span>
+                        </div>
+                        <div className="w-full bg-white/10 h-2 rounded-full overflow-hidden">
+                            <div className="bg-amber-400 h-full rounded-full w-2/3"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {/* Customers with Active Debts Directory Table / Cards (Moved to the very bottom) */}
             <div className="bg-white/80 backdrop-blur-xl border border-slate-200/60 rounded-3xl p-5 sm:p-6 shadow-2xs space-y-6">
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                     <div>
@@ -327,48 +369,6 @@ const Analytics = () => {
                         </div>
                     </>
                 )}
-            </div>
-
-            {/* Financial Health Monitor */}
-            <div className="bg-gradient-to-br from-slate-900 to-slate-800 text-white rounded-3xl p-5 sm:p-7 shadow-xl flex flex-col justify-between space-y-6 relative overflow-hidden">
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 z-10">
-                    <div className="flex items-center gap-3">
-                        <div className="p-3 bg-white/10 backdrop-blur-xl rounded-2xl text-blue-400 shrink-0">
-                            <Activity className="w-6 h-6" />
-                        </div>
-                        <div>
-                            <h4 className="font-bold text-base">Financial & Debt Liquidity Monitor</h4>
-                            <p className="text-xs text-slate-400">Payment conversion and store receivables tracking</p>
-                        </div>
-                    </div>
-                    <span className="px-3 py-1 bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-xs font-bold rounded-xl flex items-center gap-1.5 self-start sm:self-auto">
-                        <ShieldCheck className="w-4 h-4" /> Healthy
-                    </span>
-                </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 z-10 pt-2">
-                    <div className="bg-white/5 border border-white/10 rounded-2xl p-4 space-y-2">
-                        <span className="text-xs text-slate-400 font-medium">Payment Collection Efficiency</span>
-                        <div className="flex items-baseline justify-between">
-                            <span className="text-2xl font-bold">{loading ? '...' : `${analyticsData.collectionRate}%`}</span>
-                            <span className="text-[11px] text-emerald-400 font-semibold">Collected vs Total</span>
-                        </div>
-                        <div className="w-full bg-white/10 h-2 rounded-full overflow-hidden">
-                            <div className="bg-gradient-to-r from-blue-400 to-emerald-400 h-full rounded-full transition-all duration-1000" style={{ width: `${analyticsData.collectionRate}%` }}></div>
-                        </div>
-                    </div>
-
-                    <div className="bg-white/5 border border-white/10 rounded-2xl p-4 space-y-2">
-                        <span className="text-xs text-slate-400 font-medium">Total Credit Exposure</span>
-                        <div className="flex items-baseline justify-between">
-                            <span className="text-2xl font-bold text-amber-400">{loading ? '...' : `₦${analyticsData.totalOutstandingDebt.toLocaleString()}`}</span>
-                            <span className="text-[11px] text-amber-400 font-semibold">Unsettled Balances</span>
-                        </div>
-                        <div className="w-full bg-white/10 h-2 rounded-full overflow-hidden">
-                            <div className="bg-amber-400 h-full rounded-full w-2/3"></div>
-                        </div>
-                    </div>
-                </div>
             </div>
 
             {/* Individual Customer Debt Breakdown Modal */}

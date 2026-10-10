@@ -158,6 +158,7 @@ export default function Payments() {
                 description="View your completed checkout sessions and transaction history."
                 ctaText="Back to Store"
                 ctaUrl="/Customer"
+                icon={Package}
             />
 
             {/* Category Tab Switcher */}
